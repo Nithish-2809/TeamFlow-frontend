@@ -9,6 +9,5 @@ const loginAndSetAuth = async (loginDetails)=> {
 
     return data.user
 }
-console.log("hello")
 export {loginAndSetAuth}
 
