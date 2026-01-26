@@ -2,7 +2,7 @@ import { useAuthStore } from "./auth.store";
 import { getUserProfile } from "./auth.api";
 
 
-const hydrateAuth = async ()=> {
+export const hydrateAuth = async ()=> {
     const {token,setAuth,logoutUser} = useAuthStore.getState()
 
     if(!token) {

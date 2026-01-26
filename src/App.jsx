@@ -1,9 +1,7 @@
-import React from 'react'
-import "./auth/test"
+import Nav from "./layout/Nav"
+
 function App() {
-  return (
-    <div>App</div>
-  )
+  return <Nav />
 }
 
 export default App
