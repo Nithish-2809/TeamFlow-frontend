@@ -24,5 +24,19 @@ const getUserProfile = async (token)=> {
     return res.data
 }
 
+const googleSignupUser = async (idToken) => {
+  const res = await authApi.post("/users/google-signup", {
+    idToken
+  })
+  return res.data
+}
 
-export {signupUser,loginUser,getUserProfile}
+const googleLoginUser = async (idToken) => {
+  const res = await authApi.post("/users/google-login", {
+    idToken
+  })
+  return res.data
+}
+
+
+export {signupUser,loginUser,getUserProfile,googleSignupUser,googleLoginUser}

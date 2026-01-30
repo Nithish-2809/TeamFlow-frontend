@@ -1,7 +1,12 @@
 import Nav from "./layout/Nav"
+import "./App.css"
 
 function App() {
-  return <Nav />
+  return(
+    <>
+        <Nav/>
+    </>
+  )
 }
 
 export default App
