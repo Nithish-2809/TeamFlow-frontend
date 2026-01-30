@@ -25,14 +25,14 @@ const getUserProfile = async (token)=> {
 }
 
 const googleSignupUser = async (idToken) => {
-  const res = await authApi.post("/users/google-signup", {
+  const res = await authApi.post("/google-signup", {
     idToken
   })
   return res.data
 }
 
 const googleLoginUser = async (idToken) => {
-  const res = await authApi.post("/users/google-login", {
+  const res = await authApi.post("/google-login", {
     idToken
   })
   return res.data

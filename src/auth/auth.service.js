@@ -13,5 +13,5 @@ const googleLoginAndSetAuth = async (idToken) => {
   useAuthStore.getState().setAuth(user, token)
   return user
 }
-export {loginAndSetAuth}
+export {loginAndSetAuth,googleLoginAndSetAuth}
 
