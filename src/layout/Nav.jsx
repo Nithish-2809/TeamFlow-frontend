@@ -4,7 +4,7 @@ import { hydrateAuth } from "../auth/auth.hydrate"
 import { useAuthStore } from "../auth/auth.store"
 import ProtectedRoute from "../auth/ProtectedRoute"
 import ForgotPassword from "../pages/ForgotPassword"
-
+import ResetPassword from "../pages/ResetPassword"
 import Signup from "../pages/Signup"
 import Login from "../pages/Login"
 
@@ -29,6 +29,8 @@ const Nav = () => {
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
+
 
 
       {/* Protected Routes */}

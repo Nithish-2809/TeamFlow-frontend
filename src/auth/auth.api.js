@@ -45,5 +45,11 @@ const forgotPassword = async (email)=> {
   return res.data
 }
 
+const resetPassword = async (token, passwords) => {
+  const res = await authApi.patch(`/reset-password/${token}`, passwords)
+  return res.data
+}
 
-export {signupUser,loginUser,getUserProfile,googleSignupUser,googleLoginUser,forgotPassword}
+
+
+export {signupUser,loginUser,getUserProfile,googleSignupUser,googleLoginUser,forgotPassword,resetPassword}
