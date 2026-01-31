@@ -38,5 +38,12 @@ const googleLoginUser = async (idToken) => {
   return res.data
 }
 
+const forgotPassword = async (email)=> {
+  const res = await authApi.post("/forgot-password",{
+    email
+  })
+  return res.data
+}
 
-export {signupUser,loginUser,getUserProfile,googleSignupUser,googleLoginUser}
+
+export {signupUser,loginUser,getUserProfile,googleSignupUser,googleLoginUser,forgotPassword}

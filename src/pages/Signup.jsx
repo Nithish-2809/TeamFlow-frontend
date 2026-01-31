@@ -63,7 +63,7 @@ const Signup = () => {
       await signupUser(formData)
       showToast("Account created successfully! Redirecting to login...", "success")
       setTimeout(() => {
-        navigate("/login")
+        navigate("/login",{replace : true})
       }, 1500)
     } catch (err) {
       const errorMessage = err.response?.data?.msg || "Signup failed. Please try again."
@@ -81,7 +81,7 @@ const Signup = () => {
       await googleSignupUser(credentialResponse.credential)
       showToast("Google signup successful! Redirecting to login...", "success")
       setTimeout(() => {
-        navigate("/login")
+        navigate("/login",{replace : true})
       }, 1500)
     } catch (err) {
       const errorMessage = err.response?.data?.msg || "Google signup failed. Please try again."
@@ -140,15 +140,6 @@ const Signup = () => {
                 </svg>
               </div>
               <span>Advanced task management</span>
-            </div>
-            <div className="feature-item">
-              <div className="feature-icon">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                  <circle cx="10" cy="10" r="8" stroke="currentColor" strokeWidth="2"/>
-                  <path d="M7 10L9 12L13 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </div>
-              <span>Powerful integrations</span>
             </div>
           </div>
         </div>
