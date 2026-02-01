@@ -140,7 +140,7 @@ const Login = () => {
           <div className="login-form-container">
             <div className="form-header">
               <h2>Log in to your account</h2>
-              <p>Enter your credentials to continue</p>
+              <p>Enter your details to continue</p>
             </div>
 
             {error && (
@@ -237,6 +237,7 @@ const Login = () => {
                   text="signin_with"
                   shape="rectangular"
                   width="100%"
+                  theme="filled_black"
                 />
               </div>
 

@@ -7,13 +7,16 @@ import ForgotPassword from "../pages/ForgotPassword"
 import ResetPassword from "../pages/ResetPassword"
 import Signup from "../pages/Signup"
 import Login from "../pages/Login"
+import Navbar from "../components/Navbar"
+
 
 const Home = () => {
   return <h2>Home Page</h2>
 }
 
 const Nav = () => {
-  const isAuthReady = useAuthStore((state) => state.isAuthReady)
+const isAuthReady = useAuthStore((state) => state.isAuthReady)
+const user = useAuthStore((state) => state.user)
 
   useEffect(() => {
     hydrateAuth()
@@ -24,25 +27,27 @@ const Nav = () => {
   }
 
   return (
-    <Routes>
-      {/* Public Routes */}
-      <Route path="/login" element={<Login />} />
-      <Route path="/signup" element={<Signup />} />
-      <Route path="/forgot-password" element={<ForgotPassword />} />
-      <Route path="/reset-password" element={<ResetPassword />} />
+    <>
+      {user && <Navbar />}
 
+      <Routes>
+        {/* Public Routes */}
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
 
-
-      {/* Protected Routes */}
-      <Route
-        path="/"
-        element={
-          <ProtectedRoute>
-            <Home />
-          </ProtectedRoute>
-        }
-      />
-    </Routes>
+        {/* Protected Route */}
+        <Route
+          path="/"
+          element={
+            <ProtectedRoute>
+              <Home />
+            </ProtectedRoute>
+          }
+        />
+      </Routes>
+    </>
   )
 }
 

@@ -297,6 +297,7 @@ const Signup = () => {
                 text="signup_with"
                 shape="rectangular"
                 width="100%"
+                theme="filled_black"
               />
             </div>
 
