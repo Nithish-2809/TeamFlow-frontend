@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { useNavigate, useLocation } from "react-router-dom"
 import { useAuthStore } from "../auth/auth.store"
-import ConfirmationModal from "./Confirmationmodal"
+import ConfirmationModal from "../components/ConfirmationModal"
 import "../styles/Navbar.css"
 
 function Navbar() {
@@ -42,6 +42,7 @@ function Navbar() {
         {/* Logo - Home Link */}
         <div className="navbar-logo" onClick={() => navigate("/")}>
           <img src="/Logo.png" alt="TeamFlow Logo" className="navbar-logo-img" />
+          <span className="navbar-brand-text">TeamFlow</span>
         </div>
 
         {/* Desktop Navigation */}
