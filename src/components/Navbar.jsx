@@ -31,11 +31,11 @@ function Navbar() {
         isOpen={showLogoutModal}
         onClose={() => setShowLogoutModal(false)}
         onConfirm={handleLogout}
-        title="Log out of TeamFlow?"
-        message="Are you sure you want to log out? You'll need to sign in again to access your account."
+        title="Log out from TeamFlow?"
+        message="Are you sure you want to log out?"
         confirmText="Log out"
         cancelText="Cancel"
-        type="warning"
+        type="danger"
       />
 
       <nav className="navbar">
@@ -185,4 +185,4 @@ function Navbar() {
   )
 }
 
-export default Navbar
+export default Navbar 
