@@ -8,11 +8,8 @@ import ResetPassword from "../pages/ResetPassword"
 import Signup from "../pages/Signup"
 import Login from "../pages/Login"
 import Navbar from "../components/Navbar"
+import Home from "../pages/Home"
 
-
-const Home = () => {
-  return <h2>Home Page</h2>
-}
 
 const Nav = () => {
 const isAuthReady = useAuthStore((state) => state.isAuthReady)
