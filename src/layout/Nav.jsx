@@ -25,7 +25,7 @@ const user = useAuthStore((state) => state.user)
 
   return (
     <>
-      {user && <Navbar />}
+      {user && <Navbar />} 
 
       <Routes>
         {/* Public Routes */}

@@ -186,7 +186,6 @@ function Home() {
                     </div>
                     <div className="board-card-title-section">
                       <h3 className="board-card-title">{board.name}</h3>
-                      <p className="board-task-count">{board.tasksCount || 0} tasks</p>
                     </div>
                     {board.isAdmin && (
                       <div className="board-badges">
@@ -211,7 +210,7 @@ function Home() {
                       )}
                       {/* Add more member avatars here if available */}
                     </div>
-                    <span className="admin-label">You Admin</span>
+                    <span className="admin-label">{board.leader.userName}</span>
                   </div>
 
                   <p className="board-timestamp">
@@ -246,7 +245,6 @@ function Home() {
                       </div>
                       <div className="pending-card-title-section">
                         <h3 className="pending-card-title">{board.name}</h3>
-                        <p className="board-task-count">0 tasks</p>
                       </div>
                     </div>
 
@@ -264,21 +262,11 @@ function Home() {
                           </div>
                         )}
                       </div>
-                      <span className="admin-label">You Admin</span>
+                      <span className="admin-label">{board.leader.userName}</span>
                     </div>
                   </div>
                 )
               })}
-
-              {/* Create Board Card in Pending Section */}
-              <div className="create-board-card" onClick={() => navigate("/create-board")}>
-                <div className="create-board-content">
-                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none">
-                    <path d="M12 5V19M5 12H19" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                  </svg>
-                  <p className="create-board-text">Create Board</p>
-                </div>
-              </div>
             </div>
           </div>
         )}
