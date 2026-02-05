@@ -31,11 +31,7 @@
   background: white;
 }
 
-.navbar-logo:hover {
-  background: white;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 82, 204, 0.12);
-}
+
 
 .navbar-logo:active {
   transform: translateY(0);

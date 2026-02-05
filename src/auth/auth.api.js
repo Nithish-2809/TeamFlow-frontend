@@ -50,6 +50,15 @@ const resetPassword = async (token, passwords) => {
   return res.data
 }
 
+const editProfile = async (token,updatedCredentials)=> {
+  const res = await authApi.patch("/edit-profile",updatedCredentials,{
+    headers : {
+      Authorization : `Bearer ${token}`
+    }
+  })
+  return res.data
+}
 
 
-export {signupUser,loginUser,getUserProfile,googleSignupUser,googleLoginUser,forgotPassword,resetPassword}
+
+export {signupUser,loginUser,getUserProfile,googleSignupUser,googleLoginUser,forgotPassword,resetPassword,editProfile}

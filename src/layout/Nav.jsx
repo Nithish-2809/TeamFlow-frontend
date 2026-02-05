@@ -9,7 +9,7 @@ import Signup from "../pages/Signup"
 import Login from "../pages/Login"
 import Navbar from "../components/Navbar"
 import Home from "../pages/Home"
-
+import Profile from "../auth/Profile"
 
 const Nav = () => {
 const isAuthReady = useAuthStore((state) => state.isAuthReady)
@@ -43,6 +43,15 @@ const user = useAuthStore((state) => state.user)
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          }
+        />
+
       </Routes>
     </>
   )
