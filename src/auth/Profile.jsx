@@ -148,7 +148,7 @@ function Profile() {
             </div>
 
             <div className="form-group">
-              <label htmlFor="email">Email (cannot be changed)</label>
+              <label htmlFor="email">Email</label>
               <input
                 type="email"
                 id="email"
@@ -302,7 +302,7 @@ function Profile() {
         onClose={() => setShowModal(false)}
         onConfirm={handleConfirmUpdate}
         title="Update Profile"
-        message="Are you sure you want to update your profile information?"
+        message="Are you sure you want to update your profile?"
         confirmText="Update"
         cancelText="Cancel"
         type="info"

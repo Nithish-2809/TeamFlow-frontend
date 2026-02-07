@@ -3,16 +3,6 @@ import { useNavigate } from "react-router-dom"
 import { useBoardStore } from "../board/board.store"
 import "../styles/Home.css"
 
-// Icon color mapping
-const iconColors = {
-  0: { bg: '#E8F5E9', icon: '⚙️' },
-  1: { bg: '#E3F2FD', icon: '📱' },
-  2: { bg: '#FFF3E0', icon: '📢' },
-  3: { bg: '#FCE4EC', icon: '🗄️' },
-  4: { bg: '#F3E5F5', icon: '🎨' },
-  5: { bg: '#E0F2F1', icon: '💼' },
-}
-
 function Home() {
   const navigate = useNavigate()
   const [menuOpen, setMenuOpen] = useState(null)
@@ -62,11 +52,6 @@ function Home() {
     e.stopPropagation()
     navigate(`/board/${boardId}/details`)
     setMenuOpen(null)
-  }
-
-  const getIconForBoard = (index) => {
-    const colorIndex = index % Object.keys(iconColors).length
-    return iconColors[colorIndex]
   }
 
   const getInitials = (name) => {
@@ -140,8 +125,7 @@ function Home() {
         {/* Active Boards Section */}
         <div className="boards-section">
           <div className="boards-grid">
-            {sortedBoards.map((board, index) => {
-              const iconStyle = getIconForBoard(index)
+            {sortedBoards.map((board) => {
               return (
                 <div
                   key={board._id}
@@ -181,18 +165,13 @@ function Home() {
                   )}
 
                   <div className="board-card-header">
-                    <div className="board-icon" style={{ background: iconStyle.bg }}>
-                      {iconStyle.icon}
+                    {/* Use emoji from backend, fallback to default */}
+                    <div className="board-icon">
+                      {board.emoji || "📋"}
                     </div>
                     <div className="board-card-title-section">
                       <h3 className="board-card-title">{board.name}</h3>
                     </div>
-                    {board.isAdmin && (
-                      <div className="board-badges">
-                        <span className="badge badge-red">2</span>
-                        <span className="badge badge-gray">2</span>
-                      </div>
-                    )}
                   </div>
 
                   <div className="board-members">
@@ -233,15 +212,15 @@ function Home() {
             </div>
 
             <div className="pending-cards-grid">
-              {pendingBoards.map((board, index) => {
-                const iconStyle = getIconForBoard(index + sortedBoards.length)
+              {pendingBoards.map((board) => {
                 return (
                   <div key={board._id} className="pending-card">
                     <span className="pending-badge">Pending Approval</span>
 
                     <div className="pending-card-header">
-                      <div className="board-icon" style={{ background: iconStyle.bg }}>
-                        {iconStyle.icon}
+                      {/* Use emoji from backend, fallback to default */}
+                      <div className="board-icon">
+                        {board.emoji || "📋"}
                       </div>
                       <div className="pending-card-title-section">
                         <h3 className="pending-card-title">{board.name}</h3>

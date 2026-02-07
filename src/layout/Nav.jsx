@@ -10,6 +10,7 @@ import Login from "../pages/Login"
 import Navbar from "../components/Navbar"
 import Home from "../pages/Home"
 import Profile from "../auth/Profile"
+import CreateBoard from "../pages/Createboard"
 
 const Nav = () => {
 const isAuthReady = useAuthStore((state) => state.isAuthReady)
@@ -51,6 +52,16 @@ const user = useAuthStore((state) => state.user)
             </ProtectedRoute>
           }
         />
+
+        <Route
+        path="/create-board"
+        element={
+          <ProtectedRoute>
+            <CreateBoard />
+          </ProtectedRoute>
+        }
+      />
+
 
       </Routes>
     </>
