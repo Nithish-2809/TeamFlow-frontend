@@ -50,7 +50,7 @@ function Home() {
 
   const handleBoardDetails = (e, boardId) => {
     e.stopPropagation()
-    navigate(`/board/${boardId}/details`)
+    navigate(`/board/${boardId}`)
     setMenuOpen(null)
   }
 

@@ -136,8 +136,8 @@ const getBoardLists = async (token, boardId) => {
 // TASKS
 // =======================
 
-const getBoardTasks = async (token, boardId) => {
-  const res = await boardPageApi.get(`/${boardId}/tasks`, {
+const getListTasks = async (token, boardId,listId) => {
+  const res = await boardPageApi.get(`/${boardId}/lists/${listId}/tasks`, {
     headers: {
       Authorization: `Bearer ${token}`
     }
@@ -156,5 +156,5 @@ export default {
   makeBoardAdmin,
   inviteToBoard,
   getBoardLists,
-  getBoardTasks
+  getListTasks
 }

@@ -1,9 +1,8 @@
-import { create } from "zustand"
-import boardPageApi from "./boardPage.api"
-import { useAuthStore } from "../auth/auth.store"
+import { create } from "zustand";
+import boardPageApi from "./boardPage.api";
+import { useAuthStore } from "../auth/auth.store";
 
 export const useBoardPageStore = create((set, get) => ({
-
   // =========================
   // STATE
   // =========================
@@ -12,7 +11,7 @@ export const useBoardPageStore = create((set, get) => ({
   members: [],
   pendingMembers: [],
   lists: [],
-  tasks: [],
+  tasksByList: {},
 
   loading: false,
   error: null,
@@ -22,89 +21,153 @@ export const useBoardPageStore = create((set, get) => ({
   // =========================
 
   fetchBoardData: async (boardId) => {
-    const token = useAuthStore.getState().token
+    const token = useAuthStore.getState().token;
 
-    set({ loading: true, error: null })
+    set({ loading: true, error: null });
 
     try {
-      const [
-        boardDetails,
-        members,
-        pendingMembers,
-        lists,
-        tasks
-      ] = await Promise.all([
-        boardPageApi.getBoardDetails(token, boardId),
-        boardPageApi.getBoardMembers(token, boardId),
-        boardPageApi.getPendingMembers(token, boardId),
-        boardPageApi.getBoardLists(token, boardId),
-        boardPageApi.getBoardTasks(token, boardId),
-      ])
+      // Fetch board core data first
+      const [boardDetails, members, pendingMembers, listsRes] =
+        await Promise.all([
+          boardPageApi.getBoardDetails(token, boardId),
+          boardPageApi.getBoardMembers(token, boardId),
+          boardPageApi.getPendingMembers(token, boardId),
+          boardPageApi.getBoardLists(token, boardId),
+        ]);
+
+      const lists = listsRes.lists || [];
+      const tasksByList = {};
+
+      // Fetch tasks per list
+      await Promise.all(
+        lists.map(async (list) => {
+          const res = await boardPageApi.getListTasks(
+            token,
+            boardId,
+            list._id
+          );
+          tasksByList[list._id] = res.tasks || [];
+        })
+      );
 
       set({
         boardDetails,
         members: members.members || [],
         pendingMembers: pendingMembers.pendingMembers || [],
-        lists: lists.lists || [],
-        tasks: tasks.tasks || [],
-        loading: false
-      })
-
+        lists,
+        tasksByList,
+        loading: false,
+      });
     } catch (err) {
       set({
         error: err.response?.data?.msg || "Failed to load board",
-        loading: false
-      })
+        loading: false,
+      });
     }
   },
 
   // =========================
-  // REFRESH MEMBERS ONLY
+  // MEMBERS
   // =========================
+
+  sendInvite: async (boardId) => {
+    const token = useAuthStore.getState().token;
+    return await boardPageApi.inviteToBoard(token, boardId);
+  },
+
+  approveMember: async (boardId, userId) => {
+    const token = useAuthStore.getState().token;
+
+    const res = await boardPageApi.approveMember(token, boardId, userId);
+    const approvedUser = res.member;
+
+    set((state) => ({
+      members: [...state.members, approvedUser],
+      pendingMembers: state.pendingMembers.filter(
+        (m) => m.userId !== approvedUser.userId
+      ),
+    }));
+  },
+
+  rejectMember: async (boardId, userId) => {
+    const token = useAuthStore.getState().token;
+
+    await boardPageApi.rejectMember(token, boardId, userId);
+
+    set((state) => ({
+      pendingMembers: state.pendingMembers.filter(
+        (m) => m.userId !== userId
+      ),
+    }));
+  },
+
+  removeMember: async (boardId, userId) => {
+    const token = useAuthStore.getState().token;
+
+    await boardPageApi.removeMember(token, boardId, userId);
+
+    set((state) => ({
+      members: state.members.filter((m) => m.userId !== userId),
+    }));
+  },
+
+  makeBoardAdmin: async (boardId, userId) => {
+    const token = useAuthStore.getState().token;
+
+    await boardPageApi.makeBoardAdmin(token, boardId, userId);
+
+    set((state) => ({
+      members: state.members.map((m) => ({
+        ...m,
+        isAdmin: m.userId === userId,
+      })),
+    }));
+  },
+
+  leaveBoard: async (boardId) => {
+    const token = useAuthStore.getState().token;
+    await boardPageApi.leaveBoard(token, boardId);
+  },
 
   refreshMembers: async (boardId) => {
-    const token = useAuthStore.getState().token
-
-    try {
-      const res = await boardPageApi.getBoardMembers(token, boardId)
-      set({ members: res.members || [] })
-    } catch (err) {
-      console.error("Failed to refresh members")
-    }
+    const token = useAuthStore.getState().token;
+    const res = await boardPageApi.getBoardMembers(token, boardId);
+    set({ members: res.members || [] });
   },
 
   // =========================
-  // REFRESH LISTS
+  // LISTS
   // =========================
 
   refreshLists: async (boardId) => {
-    const token = useAuthStore.getState().token
-
-    try {
-      const res = await boardPageApi.getBoardLists(token, boardId)
-      set({ lists: res.lists || [] })
-    } catch (err) {
-      console.error("Failed to refresh lists")
-    }
+    const token = useAuthStore.getState().token;
+    const res = await boardPageApi.getBoardLists(token, boardId);
+    set({ lists: res.lists || [] });
   },
 
   // =========================
-  // REFRESH TASKS
+  // TASKS
   // =========================
 
-  refreshTasks: async (boardId) => {
-    const token = useAuthStore.getState().token
+  refreshTasks: async (boardId, listId) => {
+    const token = useAuthStore.getState().token;
 
-    try {
-      const res = await boardPageApi.getBoardTasks(token, boardId)
-      set({ tasks: res.tasks || [] })
-    } catch (err) {
-      console.error("Failed to refresh tasks")
-    }
+    const res = await boardPageApi.getListTasks(
+      token,
+      boardId,
+      listId
+    );
+
+    set((state) => ({
+      tasksByList: {
+        ...state.tasksByList,
+        [listId]: res.tasks || [],
+      },
+    }));
   },
 
   // =========================
-  // RESET (important when leaving board page)
+  // RESET
   // =========================
 
   resetBoardState: () => {
@@ -113,10 +176,9 @@ export const useBoardPageStore = create((set, get) => ({
       members: [],
       pendingMembers: [],
       lists: [],
-      tasks: [],
+      tasksByList: {},
       loading: false,
-      error: null
-    })
-  }
-
-}))
+      error: null,
+    });
+  },
+}));

@@ -11,6 +11,7 @@ import Navbar from "../components/Navbar"
 import Home from "../pages/Home"
 import Profile from "../auth/Profile"
 import CreateBoard from "../pages/Createboard"
+import BoardPage from "../boardPage/BoardPage"
 
 const Nav = () => {
 const isAuthReady = useAuthStore((state) => state.isAuthReady)
@@ -61,6 +62,15 @@ const user = useAuthStore((state) => state.user)
           </ProtectedRoute>
         }
       />
+      <Route
+        path="/board/:boardId"
+        element={
+          <ProtectedRoute>
+            <BoardPage />
+          </ProtectedRoute>
+        }
+      />
+
 
 
       </Routes>
