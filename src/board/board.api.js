@@ -41,15 +41,6 @@ const renameBoard = async (token, boardId, newCredentials) => {
   return res.data
 }
 
-const getBoardById = async (token, boardId) => {
-  const res = await boardApi.get(`/${boardId}`, {
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
-  })
-  return res.data
-}
-
 const deleteBoard = async (token, boardId) => {
   const res = await boardApi.delete(`/${boardId}`, {
     headers: {
@@ -64,6 +55,5 @@ export default {
   getMyBoards,
   getPendingBoards,
   renameBoard,
-  getBoardById,
   deleteBoard
 }

@@ -95,7 +95,17 @@ function Profile() {
                 />
               ) : (
                 <div className="profile-placeholder">
-                  {user.fullName?.charAt(0) || user.userName?.charAt(0) || "U"}
+                  <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
+                    <circle cx="40" cy="40" r="40" fill="url(#avatarGradient)"/>
+                    <circle cx="40" cy="32" r="12" fill="white" fillOpacity="0.9"/>
+                    <path d="M20 65C20 54 28 46 40 46C52 46 60 54 60 65" fill="white" fillOpacity="0.9"/>
+                    <defs>
+                      <linearGradient id="avatarGradient" x1="0" y1="0" x2="80" y2="80">
+                        <stop offset="0%" stopColor="#dfe3eb"/>
+                        <stop offset="100%" stopColor="#c9ced4"/>
+                      </linearGradient>
+                    </defs>
+                  </svg>
                 </div>
               )}
               <div className="profile-badge">
@@ -148,7 +158,7 @@ function Profile() {
             </div>
 
             <div className="form-group">
-              <label htmlFor="email">Email</label>
+              <label htmlFor="email">Email (cannot be changed)</label>
               <input
                 type="email"
                 id="email"
@@ -302,7 +312,7 @@ function Profile() {
         onClose={() => setShowModal(false)}
         onConfirm={handleConfirmUpdate}
         title="Update Profile"
-        message="Are you sure you want to update your profile?"
+        message="Are you sure you want to update your profile information?"
         confirmText="Update"
         cancelText="Cancel"
         type="info"
