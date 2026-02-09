@@ -18,6 +18,19 @@ const getBoardDetails = async (token, boardId) => {
   return res.data
 }
 
+const renameBoard = async (token, boardId, name) => {
+  const res = await boardPageApi.patch(
+    `/${boardId}/rename`,
+    { name },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+  )
+  return res.data
+}
+
 // =======================
 // MEMBERS
 // =======================
@@ -147,6 +160,7 @@ const getListTasks = async (token, boardId,listId) => {
 
 export default {
   getBoardDetails,
+  renameBoard,
   getBoardMembers,
   getPendingMembers,
   approveMember,

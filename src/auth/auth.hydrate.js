@@ -3,16 +3,21 @@ import { getUserProfile } from "./auth.api";
 
 
 export const hydrateAuth = async ()=> {
-    const {token,setAuth,logoutUser} = useAuthStore.getState()
+    const { token, setAuth, logoutUser, user } = useAuthStore.getState()
 
-    if(!token) {
-        useAuthStore.setState({isAuthReady : true})
+    if (user) {
+        useAuthStore.setState({ isAuthReady: true })
+        return
+    }
+
+    if (!token) {
+        useAuthStore.setState({ isAuthReady: true })
         return
     }
 
     try {
-        const user = await getUserProfile(token)
-        setAuth(user,token)
+        const profile = await getUserProfile(token)
+        setAuth(profile, token)
     }
     catch(err) {
         console.log(err)
