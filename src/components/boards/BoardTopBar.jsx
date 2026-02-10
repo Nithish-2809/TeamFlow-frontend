@@ -1,6 +1,7 @@
 import { useState } from "react" 
 import { useNavigate } from "react-router-dom" 
 import { useBoardPageStore } from "../../boardPage/boardPage.store" 
+import { useAuthStore } from "../../auth/auth.store"
 import ConfirmationModal from "../ConfirmationModal" 
 import InviteModal from "../InviteModal" 
 import RenameBoardModal from "../RenameBoardModal" 
@@ -13,7 +14,6 @@ function BoardTopBar({
   boardEmoji = "📋",
   boardLeader,
   isAdmin = false,
-  onToggleMembers, 
   onToggleChat,
   onAddList
 }) {
@@ -25,12 +25,13 @@ function BoardTopBar({
   const [showRenameModal, setShowRenameModal] = useState(false)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const [showLeaveConfirm, setShowLeaveConfirm] = useState(false)
+  const [showAdminLeaveWarning, setShowAdminLeaveWarning] = useState(false)
   
   // Toast state
   const [toast, setToast] = useState(null)
   
-  // Store actions
-  const { sendInvite, leaveBoard } = useBoardPageStore()
+  // Store
+  const { sendInvite, leaveBoard, deleteBoard } = useBoardPageStore()
 
   const handleMenuToggle = () => {
     setShowMenu(!showMenu)
@@ -46,7 +47,7 @@ function BoardTopBar({
     }
     
     try {
-      const response = await sendInvite(boardId)
+      await sendInvite(boardId)
       setShowInviteModal(true)
     } catch (error) {
       setToast({
@@ -71,12 +72,7 @@ function BoardTopBar({
     }
     
     try {
-      await fetch(`http://localhost:2231/api/boards/${boardId}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      })
+      await deleteBoard(boardId)
       
       setToast({
         message: "Board deleted successfully",
@@ -84,13 +80,24 @@ function BoardTopBar({
       })
       
       setTimeout(() => {
-        navigate('/dashboard')
+        navigate('/')
       }, 1000)
     } catch (error) {
       setToast({
         message: error.response?.data?.msg || "Failed to delete board",
         type: "error"
       })
+    }
+  }
+
+  const handleLeaveClick = () => {
+    setShowMenu(false)
+    
+    // If admin, show warning instead of leave confirmation
+    if (isAdmin) {
+      setShowAdminLeaveWarning(true)
+    } else {
+      setShowLeaveConfirm(true)
     }
   }
 
@@ -112,7 +119,7 @@ function BoardTopBar({
       })
       
       setTimeout(() => {
-        navigate('/dashboard')
+        navigate('/')
       }, 1000)
     } catch (error) {
       setToast({
@@ -124,8 +131,6 @@ function BoardTopBar({
 
   const handleBoardSettings = () => {
     setShowMenu(false)
-    // Navigate to board settings page or open settings modal
-    // For now, we'll show a toast
     setToast({
       message: "Board settings coming soon!",
       type: "info"
@@ -172,19 +177,6 @@ function BoardTopBar({
               <path d="M11 5V9M9 7H13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
             </svg>
             <span>Invite</span>
-          </button>
-
-          <button
-            className="topbar-btn"
-            onClick={onToggleMembers}
-          >
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <circle cx="6.5" cy="4.5" r="2.5" stroke="currentColor" strokeWidth="1.5"/>
-              <path d="M2 14V12.6667C2 11.9594 2.28103 11.2811 2.78103 10.781C3.28103 10.281 3.95942 10 4.66667 10H8.33333C9.04058 10 9.71897 10.281 10.219 10.781C10.719 11.2811 11 11.9594 11 12.6667V14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-              <circle cx="11.5" cy="5.5" r="2" stroke="currentColor" strokeWidth="1.5"/>
-              <path d="M14 14V13C14 12.2 13.6 11.5 13 11.1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-            </svg>
-            <span>Members</span>
           </button>
 
           <button
@@ -255,10 +247,7 @@ function BoardTopBar({
                     <div className="dropdown-divider"></div>
                     <button 
                       className="dropdown-item dropdown-item-danger"
-                      onClick={() => {
-                        setShowMenu(false)
-                        setShowLeaveConfirm(true)
-                      }}
+                      onClick={handleLeaveClick}
                     >
                       <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                         <path d="M6 14H3.33333C2.97971 14 2.64057 13.8595 2.39052 13.6095C2.14048 13.3594 2 13.0203 2 12.6667V3.33333C2 2.97971 2.14048 2.64057 2.39052 2.39052C2.64057 2.14048 2.97971 2 3.33333 2H6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
@@ -320,6 +309,18 @@ function BoardTopBar({
         confirmText="Leave Board"
         cancelText="Cancel"
         type="warning"
+      />
+
+      {/* Admin Leave Warning Modal */}
+      <ConfirmationModal
+        isOpen={showAdminLeaveWarning}
+        onClose={() => setShowAdminLeaveWarning(false)}
+        onConfirm={() => setShowAdminLeaveWarning(false)}
+        title="Cannot Leave Board"
+        message="As the board admin, you cannot leave the board. Please transfer admin rights to another member first, or delete the board if you no longer need it."
+        confirmText="Got it"
+        cancelText=""
+        type="info"
       />
 
       {/* Toast */}

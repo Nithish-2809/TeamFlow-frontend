@@ -67,6 +67,15 @@ export const useBoardPageStore = create((set, get) => ({
   },
 
   // =========================
+  // BOARD ACTIONS
+  // =========================
+
+  deleteBoard: async (boardId) => {
+    const token = useAuthStore.getState().token;
+    await boardPageApi.deleteBoard(token, boardId);
+  },
+
+  // =========================
   // MEMBERS
   // =========================
 

@@ -158,6 +158,14 @@ const getListTasks = async (token, boardId,listId) => {
   return res.data
 }
 
+const deleteBoard = async (token,boardId)=> {
+  const res = await boardPageApi.delete(`/${boardId}`,{
+    headers : {
+      Authorization: `Bearer ${token}`
+    }
+  })
+  return res.data
+}
 export default {
   getBoardDetails,
   renameBoard,
@@ -170,5 +178,6 @@ export default {
   makeBoardAdmin,
   inviteToBoard,
   getBoardLists,
-  getListTasks
+  getListTasks,
+  deleteBoard
 }
