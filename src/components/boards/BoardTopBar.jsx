@@ -14,6 +14,7 @@ function BoardTopBar({
   boardEmoji = "📋",
   boardLeader,
   isAdmin = false,
+  onToggleMembers, // Add this prop
   onToggleChat,
   onAddList
 }) {
@@ -165,6 +166,19 @@ function BoardTopBar({
               <path d="M8 3V13M3 8H13" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
             </svg>
             <span>Add List</span>
+          </button>
+
+          {/* NEW MEMBERS BUTTON */}
+          <button 
+            className="topbar-btn"
+            onClick={onToggleMembers}
+          >
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M11 14V12.6667C11 11.9594 10.719 11.2811 10.219 10.781C9.71897 10.281 9.04058 10 8.33333 10H3.66667C2.95942 10 2.28103 10.281 1.78103 10.781C1.28103 11.2811 1 11.9594 1 12.6667V14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              <circle cx="6" cy="4.5" r="2.5" stroke="currentColor" strokeWidth="1.5"/>
+              <path d="M11 5.5C11.5933 5.5 12.1734 5.67595 12.6667 6.00559C13.1601 6.33524 13.5446 6.80377 13.7716 7.35195C13.9987 7.90013 14.0581 8.50333 13.9424 9.08527C13.8266 9.66721 13.5409 10.2018 13.1213 10.6213C12.7018 11.0409 12.1672 11.3266 11.5853 11.4424C11.0033 11.5581 10.4001 11.4987 9.85195 11.2716C9.30377 11.0446 8.83524 10.6601 8.50559 10.1667C8.17595 9.67339 8 9.09334 8 8.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+            </svg>
+            <span>Members</span>
           </button>
 
           <button 
