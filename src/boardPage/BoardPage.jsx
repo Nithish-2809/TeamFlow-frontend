@@ -1,123 +1,143 @@
-import { useEffect, useState } from "react"
-import { useParams } from "react-router-dom"
-import { useBoardPageStore } from "./boardPage.store"
-import BoardTopBar from "../components/boards/BoardTopBar"
-import BoardMembersSidebar from "../components/boards/BoardMembersSidebar"
-import '../styles/BoardPage.css'
+// boardPage.store.js
 
-function BoardPage() {
-  const { boardId } = useParams()
-  const [showMembersSidebar, setShowMembersSidebar] = useState(false)
-  const [showChatSidebar, setShowChatSidebar] = useState(false)
+import { create } from 'zustand'
+import { 
+  getBoardDetails, 
+  getBoardMembers, 
+  getPendingMembers,
+  approveMemberRequest,
+  rejectMemberRequest,
+  removeBoardMember,
+  transferAdminRights,
+  leaveBoardRequest,
+  deleteBoardRequest
+} from './boardPage.api'
 
-  const { 
-    boardDetails, 
-    members,
-    loading, 
-    error, 
-    fetchBoardData,
-    resetBoardState
-  } = useBoardPageStore()
+const useBoardPageStore = create((set, get) => ({
+  boardDetails: null,
+  members: [],
+  pendingMembers: [],
+  loading: false,
+  error: null,
 
-  useEffect(() => {
-    if (boardId) {
-      fetchBoardData(boardId)
+  fetchBoardData: async (boardId) => {
+    set({ loading: true, error: null })
+    
+    try {
+      // 1. Fetch board details first
+      const boardResponse = await getBoardDetails(boardId)
+      const boardData = boardResponse.data
+      
+      // 2. Fetch members
+      const membersResponse = await getBoardMembers(boardId)
+      const membersData = membersResponse.data.members || []
+      
+      // 3. Only fetch pending members if user is admin
+      let pendingMembersData = []
+      if (boardData.isAdmin) {
+        try {
+          const pendingResponse = await getPendingMembers(boardId)
+          pendingMembersData = pendingResponse.data.pendingMembers || []
+        } catch (error) {
+          // If 403, user is not admin - that's OK, just skip pending members
+          if (error.response?.status !== 403) {
+            console.error('Error fetching pending members:', error)
+          }
+        }
+      }
+      
+      set({
+        boardDetails: boardData,
+        members: membersData,
+        pendingMembers: pendingMembersData,
+        loading: false,
+        error: null
+      })
+    } catch (error) {
+      console.error('Error fetching board data:', error)
+      set({
+        loading: false,
+        error: error.response?.data?.msg || 'Failed to load board'
+      })
     }
+  },
 
-    return () => {
-      resetBoardState()
+  approveMember: async (boardId, userId) => {
+    try {
+      await approveMemberRequest(boardId, userId)
+      
+      // Refresh board data
+      await get().fetchBoardData(boardId)
+    } catch (error) {
+      console.error('Error approving member:', error)
+      throw error
     }
-  }, [boardId, fetchBoardData, resetBoardState])
+  },
 
-  const handleToggleMembers = () => {
-    setShowMembersSidebar(!showMembersSidebar)
-    if (showChatSidebar) setShowChatSidebar(false)
+  rejectMember: async (boardId, userId) => {
+    try {
+      await rejectMemberRequest(boardId, userId)
+      
+      // Refresh board data
+      await get().fetchBoardData(boardId)
+    } catch (error) {
+      console.error('Error rejecting member:', error)
+      throw error
+    }
+  },
+
+  removeMember: async (boardId, userId) => {
+    try {
+      await removeBoardMember(boardId, userId)
+      
+      // Refresh members list
+      const membersResponse = await getBoardMembers(boardId)
+      set({ members: membersResponse.data.members || [] })
+    } catch (error) {
+      console.error('Error removing member:', error)
+      throw error
+    }
+  },
+
+  makeBoardAdmin: async (boardId, userId) => {
+    try {
+      await transferAdminRights(boardId, userId)
+      
+      // Refresh board data to reflect admin change
+      await get().fetchBoardData(boardId)
+    } catch (error) {
+      console.error('Error making admin:', error)
+      throw error
+    }
+  },
+
+  leaveBoard: async (boardId) => {
+    try {
+      await leaveBoardRequest(boardId)
+    } catch (error) {
+      console.error('Error leaving board:', error)
+      throw error
+    }
+  },
+
+  deleteBoard: async (boardId) => {
+    try {
+      await deleteBoardRequest(boardId)
+    } catch (error) {
+      console.error('Error deleting board:', error)
+      throw error
+    }
+  },
+
+  resetBoardState: () => {
+    set({
+      boardDetails: null,
+      members: [],
+      pendingMembers: [],
+      loading: false,
+      error: null
+    })
   }
+}))
 
-  const handleToggleChat = () => {
-    setShowChatSidebar(!showChatSidebar)
-    if (showMembersSidebar) setShowMembersSidebar(false)
-  }
-
-  const handleAddList = () => {
-    // Implement add list functionality
-    console.log('Add list clicked')
-  }
-
-  if (loading) {
-    return (
-      <div className="board-page-loading">
-        <div className="loading-spinner"></div>
-        <p>Loading board...</p>
-      </div>
-    )
-  }
-
-  if (error) {
-    return (
-      <div className="board-page-error">
-        <div className="error-icon">⚠️</div>
-        <h2>Error Loading Board</h2>
-        <p>{error}</p>
-      </div>
-    )
-  }
-
-  if (!boardDetails) {
-    return (
-      <div className="board-page-error">
-        <div className="error-icon">🔍</div>
-        <h2>Board Not Found</h2>
-        <p>The board you're looking for doesn't exist or you don't have access to it.</p>
-      </div>
-    )
-  }
-
-  return (
-    <div className="board-page">
-      {/* Top Bar */}
-      <BoardTopBar
-        boardId={boardId}
-        boardName={boardDetails.name}
-        boardEmoji={boardDetails.emoji}
-        boardLeader={boardDetails.leader}
-        isAdmin={boardDetails.isAdmin}
-        onToggleMembers={handleToggleMembers}
-        onToggleChat={handleToggleChat}
-        onAddList={handleAddList}
-      />
-
-      {/* Main Content Area */}
-      <div className="board-main-content">
-        <div className="board-content-inner">
-          {/* Your board lists and tasks will go here */}
-          <div className="board-placeholder">
-            <h3>Board Content Area</h3>
-            <p>Add your lists and tasks here</p>
-          </div>
-        </div>
-      </div>
-
-      {/* Members Sidebar */}
-      <BoardMembersSidebar
-        isOpen={showMembersSidebar}
-        onClose={() => setShowMembersSidebar(false)}
-        boardId={boardId}
-        isAdmin={boardDetails?.isAdmin || false}
-      />
-
-      {/* Chat Sidebar (placeholder) */}
-      {showChatSidebar && (
-        <div className="chat-sidebar">
-          <div className="sidebar-overlay" onClick={() => setShowChatSidebar(false)}></div>
-          <div className="chat-sidebar-content">
-            <h3>Chat Sidebar</h3>
-            <p>Chat functionality coming soon...</p>
-          </div>
-        </div>
-      )}
-    </div>
-  )
-}
-
-export default BoardPage
+export { useBoardPageStore }
