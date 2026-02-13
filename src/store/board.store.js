@@ -1,6 +1,6 @@
 import { create } from "zustand"
-import boardApi from "./board.api"
-import { useAuthStore } from "../auth/auth.store"
+import boardApi from "../api/board.api"
+import { useAuthStore } from "./auth.store"
 
 const useBoardStore = create((set) => ({
   boards: [],

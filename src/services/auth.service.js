@@ -1,5 +1,5 @@
-import { useAuthStore } from "./auth.store"
-import { loginUser,googleLoginUser } from "./auth.api"
+import { useAuthStore } from "../store/auth.store"
+import { loginUser,googleLoginUser } from "../api/auth.api"
 
 
 const loginAndSetAuth = async (loginDetails)=> {

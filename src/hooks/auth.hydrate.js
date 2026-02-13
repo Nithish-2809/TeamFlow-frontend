@@ -1,5 +1,5 @@
-import { useAuthStore } from "./auth.store";
-import { getUserProfile } from "./auth.api";
+import { useAuthStore } from "../store/auth.store";
+import { getUserProfile } from "../api/auth.api";
 
 
 export const hydrateAuth = async ()=> {

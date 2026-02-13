@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
-import { useBoardPageStore } from "../boardPage/boardPage.store"
-import BoardTopBar from "../components/boards/BoardTopBar"
-import BoardMembersSidebar from "../components/boards/BoardMembersSidebar"
+import { useBoardPageStore } from "../store/boardPage.store"
+import BoardTopBar from "../components/board/BoardTopBar"
+import BoardMembersSidebar from "../components/board/BoardmembersSidebar"
 import '../styles/BoardPage.css'
 
 function BoardPage() {

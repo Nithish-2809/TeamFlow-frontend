@@ -1,6 +1,6 @@
 import { create } from "zustand";
-import boardPageApi from "./boardPage.api";
-import { useAuthStore } from "../auth/auth.store";
+import boardPageApi from "../api/boardPage.api";
+import { useAuthStore } from "./auth.store";
 
 export const useBoardPageStore = create((set, get) => ({
   // =========================

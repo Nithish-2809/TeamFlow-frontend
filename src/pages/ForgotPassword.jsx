@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
-import { forgotPassword } from "../auth/auth.api"
+import { forgotPassword } from "../api/auth.api"
 import Toast from "../components/Toast"
 import "../styles/ForgotPassword.css"
 

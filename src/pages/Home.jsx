@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
-import { useBoardStore } from "../board/board.store"
+import { useBoardStore } from "../store/board.store"
 import "../styles/Home.css"
 
 function Home() {

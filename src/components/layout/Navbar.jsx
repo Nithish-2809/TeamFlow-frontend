@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { useNavigate, useLocation } from "react-router-dom"
-import { useAuthStore } from "../auth/auth.store"
-import ConfirmationModal from "../components/ConfirmationModal"
+import { useAuthStore } from "../../store/auth.store"
+import ConfirmationModal from "../modals/Confirmationmodal"
 import "../styles/Navbar.css"
 
 function Navbar() {

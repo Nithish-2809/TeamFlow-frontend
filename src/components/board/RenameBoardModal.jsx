@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react"
-import { useAuthStore } from "../auth/auth.store"
-import { useBoardPageStore } from "../boardPage/boardPage.store"
+import { useAuthStore } from "../store/auth.store"
+import { useBoardPageStore } from "../store/boardPage.store"
 import "../styles/RenameBoardModal.css"
 
 const RenameBoardModal = ({ isOpen, onClose, boardId, currentName, onSuccess }) => {

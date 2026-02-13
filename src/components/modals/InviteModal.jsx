@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { useAuthStore } from "../auth/auth.store"
+import { useAuthStore } from "../store/auth.store"
 import "../styles/InviteModal.css"
 
 const InviteModal = ({ isOpen, onClose, boardId, boardName }) => {
