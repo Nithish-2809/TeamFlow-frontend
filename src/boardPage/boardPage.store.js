@@ -26,39 +26,59 @@ export const useBoardPageStore = create((set, get) => ({
     set({ loading: true, error: null });
 
     try {
-      // Fetch board core data first
-      const [boardDetails, members, pendingMembers, listsRes] =
-        await Promise.all([
-          boardPageApi.getBoardDetails(token, boardId),
-          boardPageApi.getBoardMembers(token, boardId),
-          boardPageApi.getPendingMembers(token, boardId),
-          boardPageApi.getBoardLists(token, boardId),
-        ]);
+      // Step 1: Fetch board details first to check if user is admin
+      const boardDetails = await boardPageApi.getBoardDetails(token, boardId);
+
+      // Step 2: Fetch members and lists
+      const [members, listsRes] = await Promise.all([
+        boardPageApi.getBoardMembers(token, boardId),
+        boardPageApi.getBoardLists(token, boardId),
+      ]);
+
+      // Step 3: Only fetch pending members if user is admin
+      let pendingMembersData = { pendingMembers: [] };
+      if (boardDetails.isAdmin) {
+        try {
+          pendingMembersData = await boardPageApi.getPendingMembers(token, boardId);
+        } catch (error) {
+          // If 403, user is not actually admin or endpoint is restricted - that's OK
+          if (error.response?.status !== 403) {
+            console.error('Error fetching pending members:', error);
+          }
+        }
+      }
 
       const lists = listsRes.lists || [];
       const tasksByList = {};
 
-      // Fetch tasks per list
+      // Step 4: Fetch tasks per list
       await Promise.all(
         lists.map(async (list) => {
-          const res = await boardPageApi.getListTasks(
-            token,
-            boardId,
-            list._id
-          );
-          tasksByList[list._id] = res.tasks || [];
+          try {
+            const res = await boardPageApi.getListTasks(
+              token,
+              boardId,
+              list._id
+            );
+            tasksByList[list._id] = res.tasks || [];
+          } catch (error) {
+            console.error(`Error fetching tasks for list ${list._id}:`, error);
+            tasksByList[list._id] = [];
+          }
         })
       );
 
       set({
         boardDetails,
         members: members.members || [],
-        pendingMembers: pendingMembers.pendingMembers || [],
+        pendingMembers: pendingMembersData.pendingMembers || [],
         lists,
         tasksByList,
         loading: false,
+        error: null,
       });
     } catch (err) {
+      console.error('Error in fetchBoardData:', err);
       set({
         error: err.response?.data?.msg || "Failed to load board",
         loading: false,
@@ -130,6 +150,10 @@ export const useBoardPageStore = create((set, get) => ({
         ...m,
         isAdmin: m.userId === userId,
       })),
+      boardDetails: {
+        ...state.boardDetails,
+        isAdmin: false, // Current user loses admin status
+      },
     }));
   },
 
