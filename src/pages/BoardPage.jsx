@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom"
 import { useBoardPageStore } from "../store/boardPage.store"
 import BoardTopBar from "../components/board/BoardTopBar"
 import BoardMembersSidebar from "../components/board/BoardmembersSidebar"
+import BoardContent from "../components/board/BoardContent"
 import '../styles/BoardPage.css'
 
 function BoardPage() {
@@ -37,11 +38,6 @@ function BoardPage() {
   const handleToggleChat = () => {
     setShowChatSidebar(!showChatSidebar)
     if (showMembersSidebar) setShowMembersSidebar(false)
-  }
-
-  const handleAddList = () => {
-    // Implement add list functionality
-    console.log('Add list clicked')
   }
 
   if (loading) {
@@ -84,19 +80,13 @@ function BoardPage() {
         isAdmin={boardDetails.isAdmin}
         onToggleMembers={handleToggleMembers}
         onToggleChat={handleToggleChat}
-        onAddList={handleAddList}
       />
 
-      {/* Main Content Area */}
-      <div className="board-main-content">
-        <div className="board-content-inner">
-          {/* Your board lists and tasks will go here */}
-          <div className="board-placeholder">
-            <h3>Board Content Area</h3>
-            <p>Add your lists and tasks here</p>
-          </div>
-        </div>
-      </div>
+      {/* Main Board Content with Lists and Tasks */}
+      <BoardContent 
+        boardId={boardId} 
+        isAdmin={boardDetails.isAdmin}
+      />
 
       {/* Members Sidebar */}
       <BoardMembersSidebar
