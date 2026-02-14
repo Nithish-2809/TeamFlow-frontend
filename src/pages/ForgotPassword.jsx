@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { forgotPassword } from "../api/auth.api"
-import Toast from "../components/Toast"
+import Toast from "../components/modals/Toast"
 import "../styles/ForgotPassword.css"
 
 function ForgotPassword() {

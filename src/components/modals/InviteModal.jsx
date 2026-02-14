@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
-import { useAuthStore } from "../store/auth.store"
-import "../styles/InviteModal.css"
+import { useAuthStore } from "../../store/auth.store"
+import "../../styles/InviteModal.css"
 
 const InviteModal = ({ isOpen, onClose, boardId, boardName }) => {
   const [inviteLink, setInviteLink] = useState("")

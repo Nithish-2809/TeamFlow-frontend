@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { useBoardPageStore } from "../../store/boardPage.store"
-import Toast from "../Toast"
+import Toast from "../modals/Toast"
 import "../../styles/CreateTaskButton.css"
 
 function CreateTaskButton({ boardId, listId, isCreating, setIsCreating }) {

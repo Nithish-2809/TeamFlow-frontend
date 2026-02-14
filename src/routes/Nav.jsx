@@ -7,10 +7,10 @@ import ForgotPassword from "../pages/ForgotPassword"
 import ResetPassword from "../pages/ResetPassword"
 import Signup from "../pages/Signup"
 import Login from "../pages/Login"
-import Navbar from "../components/Navbar"
+import Navbar from "../components/layout/Navbar"
 import Home from "../pages/Home"
-import Profile from "../auth/Profile"
-import CreateBoard from "../pages/Createboard"
+import Profile from "../pages/Profile"
+import CreateBoard from "../components/board/CreateBoard"
 import BoardPage from "../pages/BoardPage"
 
 const Nav = () => {

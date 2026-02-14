@@ -2,7 +2,7 @@ import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { GoogleLogin } from "@react-oauth/google"
 import { loginAndSetAuth, googleLoginAndSetAuth } from "../services/auth.service"
-import Toast from "../components/Toast"
+import Toast from "../components/modals/Toast"
 import "../styles/Login.css"
 
 const Login = () => {

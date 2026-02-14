@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { useBoardPageStore } from "../../store/boardPage.store"
-import ConfirmationModal from "../ConfirmationModal"
-import Toast from "../Toast"
+import ConfirmationModal from "../modals/ConfirmationModal"
+import Toast from "../modals/Toast"
 import "../../styles/ListMenu.css"
 
 function ListMenu({ list, boardId }) {

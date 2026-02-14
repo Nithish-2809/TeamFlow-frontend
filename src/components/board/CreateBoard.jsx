@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { useBoardStore } from "../../store/board.store"
-import "../styles/CreateBoard.css"
+import "../../styles/CreateBoard.css"
 
 
 function CreateBoard() {

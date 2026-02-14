@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { resetPassword } from "../api/auth.api";
-import Toast from "../components/Toast";
+import Toast from "../components/modals/Toast";
 import "../styles/ResetPassword.css";
 import { useEffect } from "react";
 

@@ -2,7 +2,7 @@ import { useState } from "react"
 import { useNavigate, useLocation } from "react-router-dom"
 import { useAuthStore } from "../../store/auth.store"
 import ConfirmationModal from "../modals/Confirmationmodal"
-import "../styles/Navbar.css"
+import "../../styles/Navbar.css"
 
 function Navbar() {
   const navigate = useNavigate()
