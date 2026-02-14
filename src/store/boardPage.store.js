@@ -1,6 +1,8 @@
 import { create } from "zustand";
 import boardPageApi from "../api/boardPage.api";
-import { useAuthStore } from "./auth.store";
+import { getBoardLists, createList, renameList, deleteList, reorderLists } from "../api/list.api";
+import { getListTasks, createTask, updateTask, deleteTask, reorderTasks } from "../api/task.api";
+import {useAuthStore} from "../store/auth.store"
 
 export const useBoardPageStore = create((set, get) => ({
   // =========================
@@ -32,7 +34,7 @@ export const useBoardPageStore = create((set, get) => ({
       // Step 2: Fetch members and lists
       const [members, listsRes] = await Promise.all([
         boardPageApi.getBoardMembers(token, boardId),
-        boardPageApi.getBoardLists(token, boardId),
+        getBoardLists(token, boardId),
       ]);
 
       // Step 3: Only fetch pending members if user is admin
@@ -55,7 +57,7 @@ export const useBoardPageStore = create((set, get) => ({
       await Promise.all(
         lists.map(async (list) => {
           try {
-            const res = await boardPageApi.getListTasks(
+            const res = await getListTasks(
               token,
               boardId,
               list._id
@@ -169,23 +171,193 @@ export const useBoardPageStore = create((set, get) => ({
   },
 
   // =========================
-  // LISTS
+  // LISTS ACTIONS
   // =========================
+
+  createList: async (boardId, name) => {
+    const token = useAuthStore.getState().token;
+    
+    try {
+      const response = await createList(token, boardId, name);
+      
+      // Add the new list to state
+      set((state) => ({
+        lists: [...state.lists, response.list],
+        tasksByList: {
+          ...state.tasksByList,
+          [response.list._id]: []
+        }
+      }));
+      
+      return response;
+    } catch (error) {
+      console.error('Error creating list:', error);
+      throw error;
+    }
+  },
+
+  renameList: async (boardId, listId, name) => {
+    const token = useAuthStore.getState().token;
+    
+    try {
+      const response = await renameList(token, boardId, listId, name);
+      
+      // Update the list in state
+      set((state) => ({
+        lists: state.lists.map(list => 
+          list._id === listId ? { ...list, name: response.list.name } : list
+        )
+      }));
+      
+      return response;
+    } catch (error) {
+      console.error('Error renaming list:', error);
+      throw error;
+    }
+  },
+
+  deleteList: async (boardId, listId) => {
+    const token = useAuthStore.getState().token;
+    
+    try {
+      await deleteList(token, boardId, listId);
+      
+      // Remove the list and its tasks from state
+      set((state) => {
+        const newTasksByList = { ...state.tasksByList };
+        delete newTasksByList[listId];
+        
+        return {
+          lists: state.lists.filter(list => list._id !== listId),
+          tasksByList: newTasksByList
+        };
+      });
+    } catch (error) {
+      console.error('Error deleting list:', error);
+      throw error;
+    }
+  },
+
+  reorderLists: async (boardId, orderedListIds) => {
+    const token = useAuthStore.getState().token;
+    
+    try {
+      await reorderLists(token, boardId, orderedListIds);
+      
+      // Reorder lists in state
+      set((state) => {
+        const listsMap = new Map(state.lists.map(list => [list._id, list]));
+        const reorderedLists = orderedListIds.map(id => listsMap.get(id)).filter(Boolean);
+        
+        return { lists: reorderedLists };
+      });
+    } catch (error) {
+      console.error('Error reordering lists:', error);
+      throw error;
+    }
+  },
 
   refreshLists: async (boardId) => {
     const token = useAuthStore.getState().token;
-    const res = await boardPageApi.getBoardLists(token, boardId);
+    const res = await getBoardLists(token, boardId);
     set({ lists: res.lists || [] });
   },
 
   // =========================
-  // TASKS
+  // TASKS ACTIONS
   // =========================
+
+  createTask: async (boardId, listId, taskData) => {
+    const token = useAuthStore.getState().token;
+    
+    try {
+      const response = await createTask(token, boardId, listId, taskData);
+      
+      // Add the new task to state
+      set((state) => ({
+        tasksByList: {
+          ...state.tasksByList,
+          [listId]: [...(state.tasksByList[listId] || []), response.task]
+        }
+      }));
+      
+      return response;
+    } catch (error) {
+      console.error('Error creating task:', error);
+      throw error;
+    }
+  },
+
+  updateTask: async (boardId, listId, taskId, taskData) => {
+    const token = useAuthStore.getState().token;
+    
+    try {
+      const response = await updateTask(token, boardId, listId, taskId, taskData);
+      
+      // Update the task in state
+      set((state) => ({
+        tasksByList: {
+          ...state.tasksByList,
+          [listId]: (state.tasksByList[listId] || []).map(task =>
+            task._id === taskId ? { ...task, ...response.task } : task
+          )
+        }
+      }));
+      
+      return response;
+    } catch (error) {
+      console.error('Error updating task:', error);
+      throw error;
+    }
+  },
+
+  deleteTask: async (boardId, listId, taskId) => {
+    const token = useAuthStore.getState().token;
+    
+    try {
+      await deleteTask(token, boardId, listId, taskId);
+      
+      // Remove the task from state
+      set((state) => ({
+        tasksByList: {
+          ...state.tasksByList,
+          [listId]: (state.tasksByList[listId] || []).filter(task => task._id !== taskId)
+        }
+      }));
+    } catch (error) {
+      console.error('Error deleting task:', error);
+      throw error;
+    }
+  },
+
+  reorderTasks: async (boardId, listId, orderedTaskIds) => {
+    const token = useAuthStore.getState().token;
+    
+    try {
+      await reorderTasks(token, boardId, listId, orderedTaskIds);
+      
+      // Reorder tasks in state
+      set((state) => {
+        const tasksMap = new Map((state.tasksByList[listId] || []).map(task => [task._id, task]));
+        const reorderedTasks = orderedTaskIds.map(id => tasksMap.get(id)).filter(Boolean);
+        
+        return {
+          tasksByList: {
+            ...state.tasksByList,
+            [listId]: reorderedTasks
+          }
+        };
+      });
+    } catch (error) {
+      console.error('Error reordering tasks:', error);
+      throw error;
+    }
+  },
 
   refreshTasks: async (boardId, listId) => {
     const token = useAuthStore.getState().token;
 
-    const res = await boardPageApi.getListTasks(
+    const res = await getListTasks(
       token,
       boardId,
       listId
