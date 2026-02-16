@@ -36,8 +36,14 @@ function BoardList({ list, tasks, boardId, isAdmin }) {
   }
 
   return (
-    <div ref={setNodeRef} style={style} className="board-list">
-      <div className="list-header" {...attributes} {...listeners}>
+    <div 
+      ref={setNodeRef} 
+      style={style} 
+      className="board-list"
+      {...attributes}
+      {...listeners}
+    >
+      <div className="list-header">
         <h3 className="list-title">{list.name}</h3>
         <div className="list-actions">
           <span className="task-count">{tasks.length}</span>

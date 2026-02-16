@@ -16,7 +16,6 @@ function BoardTopBar({
   isAdmin = false,
   onToggleMembers, // Add this prop
   onToggleChat,
-  onAddList
 }) {
   const navigate = useNavigate()
   const [showMenu, setShowMenu] = useState(false)
@@ -158,15 +157,6 @@ function BoardTopBar({
 
         {/* RIGHT SECTION - Actions */}
         <div className="board-topbar-right">
-          <button 
-            className="topbar-btn topbar-btn-primary"
-            onClick={onAddList}
-          >
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <path d="M8 3V13M3 8H13" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-            </svg>
-            <span>Add List</span>
-          </button>
 
           {/* NEW MEMBERS BUTTON */}
           <button 
