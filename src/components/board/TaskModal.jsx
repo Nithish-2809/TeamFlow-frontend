@@ -6,6 +6,7 @@ import "../../styles/TaskModal.css"
 
 function TaskModal({ task, boardId, listId, onClose }) {
   const [isEditing, setIsEditing] = useState(false)
+  const [isClosing, setIsClosing] = useState(false)
   const [title, setTitle] = useState(task.title)
   const [description, setDescription] = useState(task.description || "")
   const [status, setStatus] = useState(task.status)
@@ -13,6 +14,13 @@ function TaskModal({ task, boardId, listId, onClose }) {
   const [toast, setToast] = useState(null)
 
   const { updateTask, deleteTask } = useBoardPageStore()
+
+  const handleClose = () => {
+    setIsClosing(true)
+    setTimeout(() => {
+      onClose()
+    }, 250)
+  }
 
   const handleUpdate = async () => {
     if (!title.trim()) {
@@ -34,6 +42,9 @@ function TaskModal({ task, boardId, listId, onClose }) {
         message: "Task updated successfully",
         type: "success"
       })
+      setTimeout(() => {
+        handleClose()
+      }, 1000)
     } catch (error) {
       setToast({
         message: error.response?.data?.msg || "Failed to update task",
@@ -50,7 +61,7 @@ function TaskModal({ task, boardId, listId, onClose }) {
         type: "success"
       })
       setTimeout(() => {
-        onClose()
+        handleClose()
       }, 1000)
     } catch (error) {
       setToast({
@@ -73,7 +84,10 @@ function TaskModal({ task, boardId, listId, onClose }) {
 
   return (
     <>
-      <div className="task-modal-overlay" onClick={onClose}>
+      <div
+        className={`task-modal-overlay ${isClosing ? 'closing' : ''}`}
+        onClick={handleClose}
+      >
         <div className="task-modal" onClick={(e) => e.stopPropagation()}>
           <div className="task-modal-header">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -91,7 +105,7 @@ function TaskModal({ task, boardId, listId, onClose }) {
                 autoFocus
               />
             )}
-            <button className="close-modal-btn" onClick={onClose}>
+            <button className="close-modal-btn" onClick={handleClose}>
               <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
                 <path d="M15 5L5 15M5 5L15 15" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
               </svg>

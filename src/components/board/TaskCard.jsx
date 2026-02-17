@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { createPortal } from "react-dom"
 import { useSortable } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
 import TaskModal from "./TaskModal"
@@ -27,6 +28,7 @@ function TaskCard({ task, boardId, listId, isDragging = false }) {
     transform: CSS.Transform.toString(transform),
     transition,
     opacity: isDragging || isSortableDragging ? 0.5 : 1,
+    cursor: 'pointer',
   }
 
   const getStatusColor = (status) => {
@@ -51,6 +53,13 @@ function TaskCard({ task, boardId, listId, isDragging = false }) {
     }
   }
 
+  const handleCardClick = (e) => {
+    // Prevent opening modal while dragging
+    if (!isSortableDragging) {
+      setShowModal(true)
+    }
+  }
+
   return (
     <>
       <div
@@ -59,7 +68,7 @@ function TaskCard({ task, boardId, listId, isDragging = false }) {
         {...attributes}
         {...listeners}
         className="task-card"
-        onClick={() => setShowModal(true)}
+        onClick={handleCardClick}
       >
         <h4 className="task-title">{task.title}</h4>
         {task.description && (
@@ -72,13 +81,14 @@ function TaskCard({ task, boardId, listId, isDragging = false }) {
         </div>
       </div>
 
-      {showModal && (
+      {showModal && createPortal(
         <TaskModal
           task={task}
           boardId={boardId}
           listId={listId}
           onClose={() => setShowModal(false)}
-        />
+        />,
+        document.body
       )}
     </>
   )

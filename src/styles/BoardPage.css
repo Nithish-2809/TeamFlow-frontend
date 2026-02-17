@@ -156,3 +156,25 @@
     font-size: 1.25rem;
   }
 }
+
+.board-page {
+  position: relative;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.board-content {
+  flex: 1;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 20px;
+}
+
+.board-lists-container {
+  display: flex;
+  gap: 16px;
+  height: 100%;
+  align-items: flex-start;
+}

@@ -155,3 +155,24 @@
     transition: none !important;
   }
 }
+
+.board-list {
+  min-width: 320px;
+  max-width: 320px;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  height: fit-content;
+  max-height: calc(100vh - 180px);
+  /* Remove any overflow or position properties that might interfere */
+  position: relative;
+}
+
+.list-tasks {
+  overflow-y: auto;
+  overflow-x: hidden;
+  flex: 1;
+  /* Don't set position: relative here */
+}
