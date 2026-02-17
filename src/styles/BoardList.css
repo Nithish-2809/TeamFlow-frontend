@@ -1,10 +1,10 @@
-/* Import Professional Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap');
 
 .board-list {
   width: 300px;
   min-width: 300px;
   max-width: 300px;
+  height: calc(100vh - 140px); /* fixed consistent height */
   background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
@@ -15,8 +15,9 @@
     0 0 0 1px rgba(255, 255, 255, 0.9);
   display: flex;
   flex-direction: column;
-  max-height: calc(100vh - 200px);
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  /* No position, overflow, or height:fit-content */
 }
 
 .board-list:hover {
@@ -26,7 +27,7 @@
     0 0 0 1px rgba(255, 255, 255, 0.9);
 }
 
-/* List Header */
+/* List Header - fixed, never scrolls */
 .list-header {
   padding: 16px;
   border-bottom: 2px solid rgba(223, 225, 230, 0.4);
@@ -36,7 +37,7 @@
   justify-content: space-between;
   cursor: grab;
   border-radius: 10px 10px 0 0;
-  flex-shrink: 0;
+  flex-shrink: 0; /* never shrink */
 }
 
 .list-header:active {
@@ -75,27 +76,28 @@
   text-align: center;
 }
 
-/* List Tasks */
+/* List Tasks - scrollable area */
 .list-tasks {
   flex: 1;
   overflow-y: auto;
+  overflow-x: hidden;
   padding: 12px;
   display: flex;
   flex-direction: column;
   gap: 10px;
-  min-height: 100px;
 }
 
 .list-tasks::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
 }
 
 .list-tasks::-webkit-scrollbar-track {
   background: transparent;
+  margin: 4px 0;
 }
 
 .list-tasks::-webkit-scrollbar-thumb {
-  background: rgba(9, 30, 66, 0.2);
+  background: rgba(9, 30, 66, 0.15);
   border-radius: 4px;
 }
 
@@ -104,16 +106,24 @@
 }
 
 /* Empty State */
-.list-tasks:empty::after {
-  content: 'No tasks yet';
+.empty-tasks {
+  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 100px;
   font-family: 'DM Sans', sans-serif;
   font-size: 0.875rem;
   color: var(--neutral-400);
   font-style: italic;
+  pointer-events: none;
+  padding: 20px 0;
+}
+
+/* Add Task Button - fixed at bottom, never scrolls */
+.create-task-btn-wrapper {
+  flex-shrink: 0;
+  padding: 10px 12px;
+  border-top: 2px solid rgba(223, 225, 230, 0.4);
 }
 
 /* Responsive */
@@ -122,6 +132,7 @@
     width: 280px;
     min-width: 280px;
     max-width: 280px;
+    height: calc(100vh - 120px);
   }
 
   .list-header {
@@ -138,6 +149,7 @@
     width: 260px;
     min-width: 260px;
     max-width: 260px;
+    height: calc(100vh - 100px);
   }
 
   .list-header {
@@ -149,30 +161,8 @@
   }
 }
 
-/* Accessibility */
 @media (prefers-reduced-motion: reduce) {
   .board-list {
     transition: none !important;
   }
-}
-
-.board-list {
-  min-width: 320px;
-  max-width: 320px;
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 12px;
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  height: fit-content;
-  max-height: calc(100vh - 180px);
-  /* Remove any overflow or position properties that might interfere */
-  position: relative;
-}
-
-.list-tasks {
-  overflow-y: auto;
-  overflow-x: hidden;
-  flex: 1;
-  /* Don't set position: relative here */
 }

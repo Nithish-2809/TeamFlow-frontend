@@ -13,7 +13,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 10000;
+  z-index: 99999;  /* higher than task modal's 10000 */
   animation: fadeIn 0.2s ease-out;
   padding: 1rem;
 }

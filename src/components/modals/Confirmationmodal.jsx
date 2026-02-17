@@ -1,4 +1,5 @@
 import { useEffect } from "react"
+import { createPortal } from "react-dom"
 import "../../styles/ConfirmationModal.css"
 
 const ConfirmationModal = ({ 
@@ -9,7 +10,7 @@ const ConfirmationModal = ({
   message = "Are you sure you want to proceed?",
   confirmText = "Confirm",
   cancelText = "Cancel",
-  type = "warning" // warning, danger, info
+  type = "warning"
 }) => {
   useEffect(() => {
     if (isOpen) {
@@ -54,7 +55,7 @@ const ConfirmationModal = ({
             <path d="M24 22V32M24 16V16.5" stroke="#0052CC" strokeWidth="2.5" strokeLinecap="round"/>
           </svg>
         )
-      default: // warning
+      default:
         return (
           <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
             <circle cx="24" cy="24" r="22" fill="#FFF4E5"/>
@@ -65,7 +66,7 @@ const ConfirmationModal = ({
     }
   }
 
-  return (
+  return createPortal(
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-container" onClick={(e) => e.stopPropagation()}>
         <div className="modal-icon">
@@ -95,7 +96,8 @@ const ConfirmationModal = ({
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   )
 }
 

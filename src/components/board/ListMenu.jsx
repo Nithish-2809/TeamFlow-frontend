@@ -127,7 +127,7 @@ function ListMenu({ list, boardId }) {
                 Save
               </button>
               <button className="btn-cancel" onClick={() => setShowRenameModal(false)}>
-                Cancel
+                ❌
               </button>
             </div>
           </div>

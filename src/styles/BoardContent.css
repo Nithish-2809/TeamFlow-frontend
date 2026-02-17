@@ -1,4 +1,3 @@
-/* Import Professional Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap');
 
 .board-content {
@@ -7,12 +6,14 @@
   overflow-y: hidden;
   padding: 24px;
   background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
+  height: calc(100vh - 80px); /* adjust 80px to match your topbar height */
 }
 
 .board-lists-container {
   display: flex;
   gap: 16px;
-  min-height: calc(100vh - 200px);
+  height: 100%;
+  align-items: flex-start;
   padding-bottom: 24px;
 }
 
@@ -44,9 +45,9 @@
   margin: 0;
 }
 
-/* Scrollbar Styling */
+/* Horizontal Scrollbar */
 .board-content::-webkit-scrollbar {
-  height: 12px;
+  height: 8px;
 }
 
 .board-content::-webkit-scrollbar-track {
@@ -75,7 +76,6 @@
 
   .board-lists-container {
     gap: 12px;
-    padding-bottom: 16px;
   }
 }
 
@@ -89,7 +89,6 @@
   }
 }
 
-/* Accessibility */
 @media (prefers-reduced-motion: reduce) {
   .list-drag-overlay {
     transform: none !important;
