@@ -86,22 +86,19 @@
 }
 
 .status-pending {
-  background: rgba(107, 119, 140, 0.12);
-  color: var(--neutral-700);
+  background: red;
 }
 
 .status-pending::before {
-  background: var(--neutral-500);
+  background: red;
 }
 
 .status-in-progress {
-  background: rgba(0, 82, 204, 0.12);
-  color: var(--primary-blue);
+  background: yellow;
 }
 
 .status-in-progress::before {
-  background: var(--primary-blue);
-  animation: pulse-status 2s ease-in-out infinite;
+  background: yellow;
 }
 
 @keyframes pulse-status {
@@ -110,8 +107,8 @@
 }
 
 .status-completed {
-  background: rgba(0, 135, 90, 0.12);
-  color: var(--success);
+  color: white;
+  background: rgb(106, 242, 15);
 }
 
 .status-completed::before {
