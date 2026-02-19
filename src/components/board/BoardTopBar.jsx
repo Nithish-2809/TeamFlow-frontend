@@ -1,4 +1,4 @@
-import { useState } from "react" 
+import { useState, useRef, useEffect } from "react" 
 import { useNavigate } from "react-router-dom" 
 import { useBoardPageStore } from "../../store/boardPage.store" 
 import { useAuthStore } from "../../store/auth.store"
@@ -14,11 +14,12 @@ function BoardTopBar({
   boardEmoji = "📋",
   boardLeader,
   isAdmin = false,
-  onToggleMembers, // Add this prop
+  onToggleMembers,
   onToggleChat,
 }) {
   const navigate = useNavigate()
   const [showMenu, setShowMenu] = useState(false)
+  const menuRef = useRef(null)
   
   // Modal states
   const [showInviteModal, setShowInviteModal] = useState(false)
@@ -32,6 +33,23 @@ function BoardTopBar({
   
   // Store
   const { sendInvite, leaveBoard, deleteBoard } = useBoardPageStore()
+
+  // Close menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setShowMenu(false)
+      }
+    }
+
+    if (showMenu) {
+      document.addEventListener('mousedown', handleClickOutside)
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [showMenu])
 
   const handleMenuToggle = () => {
     setShowMenu(!showMenu)
@@ -158,7 +176,7 @@ function BoardTopBar({
         {/* RIGHT SECTION - Actions */}
         <div className="board-topbar-right">
 
-          {/* NEW MEMBERS BUTTON */}
+          {/* MEMBERS BUTTON */}
           <button 
             className="topbar-btn"
             onClick={onToggleMembers}
@@ -193,7 +211,7 @@ function BoardTopBar({
             <span>Chat</span>
           </button>
 
-          <div className="topbar-menu-wrapper">
+          <div className="topbar-menu-wrapper" ref={menuRef}>
             <button 
               className="topbar-icon-btn"
               onClick={handleMenuToggle}
