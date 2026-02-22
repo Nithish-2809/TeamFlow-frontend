@@ -12,6 +12,7 @@ import Home from "../pages/Home"
 import Profile from "../pages/Profile"
 import CreateBoard from "../components/board/CreateBoard"
 import BoardPage from "../pages/BoardPage"
+import InviteJoinPage from "../components/board/InviteJoinPage"
 
 const Nav = () => {
   const location = useLocation()
@@ -74,6 +75,12 @@ const Nav = () => {
             </ProtectedRoute>
           }
         />
+        <Route path="/invite/:token"
+         element={
+          <ProtectedRoute>
+            <InviteJoinPage />
+          </ProtectedRoute>
+          } />
       </Routes>
     </>
   )

@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react"
 import { useParams, useNavigate } from "react-router-dom"
-import { validateInviteToken, joinViaInviteLink } from "../api/invite.api"
-import { useAuthStore } from "../store/auth.store"
-import Toast from "../components/modals/Toast"
-import "../styles/InviteJoinPage.css"
+import { validateInviteToken, joinViaInviteLink } from "../../api/invite.api"
+import { useAuthStore } from "../../store/auth.store"
+import Toast from "../modals/Toast"
+import "../../styles/InviteJoinPage.css"
 
 function InviteJoinPage() {
   const { token } = useParams()

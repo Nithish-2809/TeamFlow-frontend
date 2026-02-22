@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react"
+import { createPortal } from "react-dom"
 import { useAuthStore } from "../../store/auth.store"
+import { useBoardPageStore } from "../../store/boardPage.store"
 import "../../styles/InviteModal.css"
 
 const InviteModal = ({ isOpen, onClose, boardId, boardName }) => {
@@ -8,7 +10,7 @@ const InviteModal = ({ isOpen, onClose, boardId, boardName }) => {
   const [copied, setCopied] = useState(false)
   const [error, setError] = useState(null)
   
-  const token = useAuthStore((state) => state.token)
+  const { sendInvite } = useBoardPageStore()
 
   useEffect(() => {
     if (isOpen) {
@@ -39,23 +41,13 @@ const InviteModal = ({ isOpen, onClose, boardId, boardName }) => {
     setError(null)
     
     try {
-      const response = await fetch(`http://localhost:2231/api/boards/${boardId}/invite`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      })
-
-      const data = await response.json()
-
-      if (!response.ok) {
-        throw new Error(data.msg || 'Failed to generate invite link')
-      }
-
-      setInviteLink(data.inviteLink)
+      const response = await sendInvite(boardId)
+      
+      // Construct the full invite link
+      const fullInviteLink = `${response.inviteLink}`
+      setInviteLink(fullInviteLink)
     } catch (err) {
-      setError(err.message)
+      setError(err.response?.data?.msg || 'Failed to generate invite link')
     } finally {
       setLoading(false)
     }
@@ -73,7 +65,7 @@ const InviteModal = ({ isOpen, onClose, boardId, boardName }) => {
 
   if (!isOpen) return null
 
-  return (
+  const modal = (
     <div className="modal-overlay" onClick={onClose}>
       <div className="invite-modal-container" onClick={(e) => e.stopPropagation()}>
         <div className="invite-modal-header">
@@ -178,6 +170,8 @@ const InviteModal = ({ isOpen, onClose, boardId, boardName }) => {
       </div>
     </div>
   )
+
+  return createPortal(modal, document.body)
 }
 
 export default InviteModal
