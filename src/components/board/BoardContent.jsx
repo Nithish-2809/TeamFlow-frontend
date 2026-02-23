@@ -31,9 +31,6 @@ function BoardContent({ boardId, isAdmin }) {
       activationConstraint: {
         distance: 8,
       },
-    }),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
     })
   )
 
