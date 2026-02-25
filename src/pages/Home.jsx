@@ -6,32 +6,22 @@ import "../styles/Home.css"
 function Home() {
   const navigate = useNavigate()
   const [menuOpen, setMenuOpen] = useState(null)
+  const [hoveredCard, setHoveredCard] = useState(null)
 
-  const {
-    boards,
-    pendingBoards,
-    fetchBoards,
-    loading,
-    error
-  } = useBoardStore()
+  const { boards, pendingBoards, fetchBoards, loading, error } = useBoardStore()
 
   useEffect(() => {
     fetchBoards()
   }, [fetchBoards])
 
-  // Close menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (e) => {
-      if (!e.target.closest('.board-menu-button')) {
-        setMenuOpen(null)
-      }
+      if (!e.target.closest(".board-menu-btn")) setMenuOpen(null)
     }
-
-    document.addEventListener('click', handleClickOutside)
-    return () => document.removeEventListener('click', handleClickOutside)
+    document.addEventListener("click", handleClickOutside)
+    return () => document.removeEventListener("click", handleClickOutside)
   }, [])
 
-  // Sort by latest updated
   const sortedBoards = [...boards].sort(
     (a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)
   )
@@ -41,49 +31,31 @@ function Home() {
     setMenuOpen(menuOpen === boardId ? null : boardId)
   }
 
-  const handleLeaveBoard = (e, boardId) => {
-    e.stopPropagation()
-    // TODO: Implement leave board logic
-    console.log("Leave board:", boardId)
-    setMenuOpen(null)
-  }
-
-  const handleBoardDetails = (e, boardId) => {
-    e.stopPropagation()
-    navigate(`/board/${boardId}`)
-    setMenuOpen(null)
-  }
-
-  const getInitials = (name) => {
-    if (!name) return '?'
-    return name.charAt(0).toUpperCase()
-  }
+  const getInitials = (name) => name?.charAt(0).toUpperCase() ?? "?"
 
   const formatTimeAgo = (date) => {
-    const now = new Date()
-    const updated = new Date(date)
-    const diffInMs = now - updated
-    const diffInMins = Math.floor(diffInMs / 60000)
-    const diffInHours = Math.floor(diffInMs / 3600000)
-    const diffInDays = Math.floor(diffInMs / 86400000)
-
-    if (diffInMins < 60) {
-      return `Updated ${diffInMins} mins ago`
-    } else if (diffInHours < 24) {
-      return `Updated ${diffInHours} hour${diffInHours > 1 ? 's' : ''} ago`
-    } else if (diffInDays < 7) {
-      return `Updated ${diffInDays} day${diffInDays > 1 ? 's' : ''} ago`
-    } else {
-      return `Updated ${updated.toLocaleDateString()}`
-    }
+    const diff = Date.now() - new Date(date)
+    const mins = Math.floor(diff / 60000)
+    const hours = Math.floor(diff / 3600000)
+    const days = Math.floor(diff / 86400000)
+    if (mins < 60) return `${mins}m ago`
+    if (hours < 24) return `${hours}h ago`
+    if (days < 7) return `${days}d ago`
+    return new Date(date).toLocaleDateString()
   }
+
+  // Assign a subtle accent color per board based on index
+  const CARD_ACCENTS = [
+    "#6366f1", "#0ea5e9", "#10b981", "#f59e0b",
+    "#ec4899", "#8b5cf6", "#14b8a6", "#f97316",
+  ]
 
   if (loading) {
     return (
-      <div className="home-container">
-        <div className="loading-state">
-          <div className="loading-spinner"></div>
-          <p className="loading-text">Loading your boards...</p>
+      <div className="home-root">
+        <div className="home-loading">
+          <div className="home-loading__ring" />
+          <span>Loading boards…</span>
         </div>
       </div>
     )
@@ -91,164 +63,158 @@ function Home() {
 
   if (error) {
     return (
-      <div className="home-container">
-        <div className="error-state">
-          <div className="error-icon">
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
-              <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
-              <path d="M12 8V12M12 16H12.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-            </svg>
-          </div>
-          <p className="error-text">{error}</p>
+      <div className="home-root">
+        <div className="home-error">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="1.5" />
+            <path d="M12 8v4M12 16h.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+          </svg>
+          <p>{error}</p>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="home-container">
-      <div className="home-wrapper">
-        {/* Header with Create Button */}
-        <div className="home-header">
-          <h1>My Boards</h1>
+    <div className="home-root">
+      <div className="home-inner">
+
+        {/* ── Top bar ── */}
+        <header className="home-topbar">
+          <div className="home-topbar__left">
+            <h1 className="home-topbar__title">My Workspace</h1>
+            <span className="home-topbar__count">
+              {sortedBoards.length} board{sortedBoards.length !== 1 ? "s" : ""}
+            </span>
+          </div>
           <button
-            className="create-board-button-top"
+            className="home-create-btn"
             onClick={() => navigate("/create-board")}
           >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-              <path d="M12 5V19M5 12H19" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"/>
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M8 3v10M3 8h10" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" />
             </svg>
-            <span>Create Board</span>
+            New Board
           </button>
-        </div>
+        </header>
 
-        {/* Active Boards Section */}
-        <div className="boards-section">
-          <div className="boards-grid">
-            {sortedBoards.map((board) => {
+        {/* ── Active boards ── */}
+        {sortedBoards.length === 0 ? (
+          <div className="home-empty" onClick={() => navigate("/create-board")}>
+            <div className="home-empty__icon">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+                <rect x="3" y="3" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.5" />
+                <rect x="14" y="3" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.5" />
+                <rect x="3" y="14" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.5" />
+                <path d="M17.5 14v7M14 17.5h7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+              </svg>
+            </div>
+            <p className="home-empty__title">No boards yet</p>
+            <p className="home-empty__sub">Click to create your first board</p>
+          </div>
+        ) : (
+          <div className="home-grid">
+            {sortedBoards.map((board, i) => {
+              const accent = CARD_ACCENTS[i % CARD_ACCENTS.length]
               return (
                 <div
                   key={board._id}
-                  className="board-card"
+                  className="bcard"
+                  style={{ "--accent": accent, animationDelay: `${i * 0.06}s` }}
                   onClick={() => navigate(`/board/${board._id}`)}
+                  onMouseEnter={() => setHoveredCard(board._id)}
+                  onMouseLeave={() => setHoveredCard(null)}
                 >
+                  {/* Accent strip */}
+                  <div className="bcard__strip" />
+
+                  {/* Three-dot menu */}
                   <button
-                    className="board-menu-button"
+                    className="board-menu-btn"
                     onClick={(e) => handleMenuToggle(e, board._id)}
-                    aria-label="Board options"
                   >
-                    ⋮
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                      <circle cx="8" cy="3" r="1.2" fill="currentColor" />
+                      <circle cx="8" cy="8" r="1.2" fill="currentColor" />
+                      <circle cx="8" cy="13" r="1.2" fill="currentColor" />
+                    </svg>
                   </button>
 
                   {menuOpen === board._id && (
-                    <div className="board-menu-dropdown">
+                    <div className="bcard__dropdown" onClick={(e) => e.stopPropagation()}>
                       <button
-                        className="menu-option"
-                        onClick={(e) => handleBoardDetails(e, board._id)}
+                        className="bcard__dropdown-item"
+                        onClick={() => { navigate(`/board/${board._id}`); setMenuOpen(null) }}
                       >
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                          <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
-                          <path d="M12 16V12M12 8H12.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                        <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                          <path d="M8 3h8M8 8h8M8 13h8M2 3h2M2 8h2M2 13h2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
                         </svg>
-                        Board Details
-                      </button>
-                      <button
-                        className="menu-option danger"
-                        onClick={(e) => handleLeaveBoard(e, board._id)}
-                      >
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                          <path d="M9 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H9M16 17L21 12M21 12L16 7M21 12H9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                        </svg>
-                        Leave Board
+                        Open Board
                       </button>
                     </div>
                   )}
 
-                  <div className="board-card-header">
-                    {/* Use emoji from backend, fallback to default */}
-                    <div className="board-icon">
-                      {board.emoji || "📋"}
-                    </div>
-                    <div className="board-card-title-section">
-                      <h3 className="board-card-title">{board.name}</h3>
-                    </div>
-                  </div>
+                  {/* Emoji */}
+                  <div className="bcard__emoji">{board.emoji || "📋"}</div>
 
-                  <div className="board-members">
-                    <div className="members-avatars">
+                  {/* Name */}
+                  <h3 className="bcard__name">{board.name}</h3>
+
+                  {/* Footer */}
+                  <div className="bcard__footer">
+                    <div className="bcard__leader">
                       {board.leader?.profilePic ? (
-                        <img
-                          src={board.leader.profilePic}
-                          alt={board.leader.userName}
-                          className="member-avatar"
-                        />
+                        <img src={board.leader.profilePic} alt={board.leader.userName} className="bcard__avatar" />
                       ) : (
-                        <div className="member-avatar-placeholder">
+                        <div className="bcard__avatar bcard__avatar--placeholder">
                           {getInitials(board.leader?.userName)}
                         </div>
                       )}
-                      {/* Add more member avatars here if available */}
+                      <span className="bcard__leader-name">{board.leader?.userName}</span>
                     </div>
-                    <span className="admin-label">{board.leader.userName}</span>
+                    <span className="bcard__time">{formatTimeAgo(board.updatedAt)}</span>
                   </div>
-
-                  <p className="board-timestamp">
-                    {formatTimeAgo(board.updatedAt)}
-                  </p>
                 </div>
               )
             })}
           </div>
-        </div>
+        )}
 
-        {/* Pending Boards Section */}
+        {/* ── Pending boards ── */}
         {pendingBoards.length > 0 && (
-          <div className="pending-section">
-            <div className="section-header">
-              <h2 className="section-title">Pending ({pendingBoards.length})</h2>
-              <button className="section-menu-button" aria-label="Section options">
-                ⋮
-              </button>
+          <section className="home-pending">
+            <div className="home-pending__header">
+              <span className="home-pending__label">Awaiting approval</span>
+              <span className="home-pending__pill">{pendingBoards.length}</span>
             </div>
-
-            <div className="pending-cards-grid">
-              {pendingBoards.map((board) => {
-                return (
-                  <div key={board._id} className="pending-card">
-                    <span className="pending-badge">Pending Approval</span>
-
-                    <div className="pending-card-header">
-                      {/* Use emoji from backend, fallback to default */}
-                      <div className="board-icon">
-                        {board.emoji || "📋"}
-                      </div>
-                      <div className="pending-card-title-section">
-                        <h3 className="pending-card-title">{board.name}</h3>
-                      </div>
-                    </div>
-
-                    <div className="board-members">
-                      <div className="members-avatars">
-                        {board.leader?.profilePic ? (
-                          <img
-                            src={board.leader.profilePic}
-                            alt={board.leader.userName}
-                            className="member-avatar"
-                          />
-                        ) : (
-                          <div className="member-avatar-placeholder">
-                            {getInitials(board.leader?.userName)}
-                          </div>
-                        )}
-                      </div>
-                      <span className="admin-label">{board.leader.userName}</span>
+            <div className="home-grid home-grid--pending">
+              {pendingBoards.map((board, i) => (
+                <div
+                  key={board._id}
+                  className="bcard bcard--pending"
+                  style={{ animationDelay: `${i * 0.06}s` }}
+                >
+                  <div className="bcard__pending-badge">Pending</div>
+                  <div className="bcard__emoji">{board.emoji || "📋"}</div>
+                  <h3 className="bcard__name">{board.name}</h3>
+                  <div className="bcard__footer">
+                    <div className="bcard__leader">
+                      {board.leader?.profilePic ? (
+                        <img src={board.leader.profilePic} alt={board.leader.userName} className="bcard__avatar" />
+                      ) : (
+                        <div className="bcard__avatar bcard__avatar--placeholder">
+                          {getInitials(board.leader?.userName)}
+                        </div>
+                      )}
+                      <span className="bcard__leader-name">{board.leader?.userName}</span>
                     </div>
                   </div>
-                )
-              })}
+                </div>
+              ))}
             </div>
-          </div>
+          </section>
         )}
+
       </div>
     </div>
   )
