@@ -1,8 +1,20 @@
 import { create } from "zustand";
 import boardPageApi from "../api/boardPage.api";
-import { getBoardLists, createList, renameList, deleteList, reorderLists } from "../api/list.api";
-import { getListTasks, createTask, updateTask, deleteTask, reorderTasks } from "../api/task.api";
-import {useAuthStore} from "../store/auth.store"
+import {
+  getBoardLists,
+  createList,
+  renameList,
+  deleteList,
+  reorderLists,
+} from "../api/list.api";
+import {
+  getListTasks,
+  createTask,
+  updateTask,
+  deleteTask,
+  reorderTasks,
+} from "../api/task.api";
+import { useAuthStore } from "../store/auth.store";
 
 export const useBoardPageStore = create((set, get) => ({
   // =========================
@@ -41,11 +53,14 @@ export const useBoardPageStore = create((set, get) => ({
       let pendingMembersData = { pendingMembers: [] };
       if (boardDetails.isAdmin) {
         try {
-          pendingMembersData = await boardPageApi.getPendingMembers(token, boardId);
+          pendingMembersData = await boardPageApi.getPendingMembers(
+            token,
+            boardId,
+          );
         } catch (error) {
           // If 403, user is not actually admin or endpoint is restricted - that's OK
           if (error.response?.status !== 403) {
-            console.error('Error fetching pending members:', error);
+            console.error("Error fetching pending members:", error);
           }
         }
       }
@@ -57,17 +72,13 @@ export const useBoardPageStore = create((set, get) => ({
       await Promise.all(
         lists.map(async (list) => {
           try {
-            const res = await getListTasks(
-              token,
-              boardId,
-              list._id
-            );
+            const res = await getListTasks(token, boardId, list._id);
             tasksByList[list._id] = res.tasks || [];
           } catch (error) {
             console.error(`Error fetching tasks for list ${list._id}:`, error);
             tasksByList[list._id] = [];
           }
-        })
+        }),
       );
 
       set({
@@ -80,7 +91,7 @@ export const useBoardPageStore = create((set, get) => ({
         error: null,
       });
     } catch (err) {
-      console.error('Error in fetchBoardData:', err);
+      console.error("Error in fetchBoardData:", err);
       set({
         error: err.response?.data?.msg || "Failed to load board",
         loading: false,
@@ -115,7 +126,7 @@ export const useBoardPageStore = create((set, get) => ({
     set((state) => ({
       members: [...state.members, approvedUser],
       pendingMembers: state.pendingMembers.filter(
-        (m) => m.userId !== approvedUser.userId
+        (m) => m.userId.toString() !== userId.toString(),
       ),
     }));
   },
@@ -127,7 +138,7 @@ export const useBoardPageStore = create((set, get) => ({
 
     set((state) => ({
       pendingMembers: state.pendingMembers.filter(
-        (m) => m.userId !== userId
+        (m) => m.userId.toString() !== userId.toString(),
       ),
     }));
   },
@@ -176,83 +187,85 @@ export const useBoardPageStore = create((set, get) => ({
 
   createList: async (boardId, name) => {
     const token = useAuthStore.getState().token;
-    
+
     try {
       const response = await createList(token, boardId, name);
-      
+
       // Add the new list to state
       set((state) => ({
         lists: [...state.lists, response.list],
         tasksByList: {
           ...state.tasksByList,
-          [response.list._id]: []
-        }
+          [response.list._id]: [],
+        },
       }));
-      
+
       return response;
     } catch (error) {
-      console.error('Error creating list:', error);
+      console.error("Error creating list:", error);
       throw error;
     }
   },
 
   renameList: async (boardId, listId, name) => {
     const token = useAuthStore.getState().token;
-    
+
     try {
       const response = await renameList(token, boardId, listId, name);
-      
+
       // Update the list in state
       set((state) => ({
-        lists: state.lists.map(list => 
-          list._id === listId ? { ...list, name: response.list.name } : list
-        )
+        lists: state.lists.map((list) =>
+          list._id === listId ? { ...list, name: response.list.name } : list,
+        ),
       }));
-      
+
       return response;
     } catch (error) {
-      console.error('Error renaming list:', error);
+      console.error("Error renaming list:", error);
       throw error;
     }
   },
 
   deleteList: async (boardId, listId) => {
     const token = useAuthStore.getState().token;
-    
+
     try {
       await deleteList(token, boardId, listId);
-      
+
       // Remove the list and its tasks from state
       set((state) => {
         const newTasksByList = { ...state.tasksByList };
         delete newTasksByList[listId];
-        
+
         return {
-          lists: state.lists.filter(list => list._id !== listId),
-          tasksByList: newTasksByList
+          lists: state.lists.filter((list) => list._id !== listId),
+          tasksByList: newTasksByList,
         };
       });
     } catch (error) {
-      console.error('Error deleting list:', error);
+      console.error("Error deleting list:", error);
       throw error;
     }
   },
 
   reorderLists: async (boardId, orderedListIds) => {
     const token = useAuthStore.getState().token;
-    
+
     try {
       await reorderLists(token, boardId, orderedListIds);
-      
+
       // Reorder lists in state
       set((state) => {
-        const listsMap = new Map(state.lists.map(list => [list._id, list]));
-        const reorderedLists = orderedListIds.map(id => listsMap.get(id)).filter(Boolean);
-        
+        const listsMap = new Map(state.lists.map((list) => [list._id, list]));
+        const reorderedLists = orderedListIds
+          .map((id) => listsMap.get(id))
+          .filter(Boolean);
+
         return { lists: reorderedLists };
       });
     } catch (error) {
-      console.error('Error reordering lists:', error);
+      console.error("Error reordering lists:", error);
       throw error;
     }
   },
@@ -269,87 +282,99 @@ export const useBoardPageStore = create((set, get) => ({
 
   createTask: async (boardId, listId, taskData) => {
     const token = useAuthStore.getState().token;
-    
+
     try {
       const response = await createTask(token, boardId, listId, taskData);
-      
+
       // Add the new task to state
       set((state) => ({
         tasksByList: {
           ...state.tasksByList,
-          [listId]: [...(state.tasksByList[listId] || []), response.task]
-        }
+          [listId]: [...(state.tasksByList[listId] || []), response.task],
+        },
       }));
-      
+
       return response;
     } catch (error) {
-      console.error('Error creating task:', error);
+      console.error("Error creating task:", error);
       throw error;
     }
   },
 
   updateTask: async (boardId, listId, taskId, taskData) => {
     const token = useAuthStore.getState().token;
-    
+
     try {
-      const response = await updateTask(token, boardId, listId, taskId, taskData);
-      
+      const response = await updateTask(
+        token,
+        boardId,
+        listId,
+        taskId,
+        taskData,
+      );
+
       // Update the task in state
       set((state) => ({
         tasksByList: {
           ...state.tasksByList,
-          [listId]: (state.tasksByList[listId] || []).map(task =>
-            task._id === taskId ? { ...task, ...response.task } : task
-          )
-        }
+          [listId]: (state.tasksByList[listId] || []).map((task) =>
+            task._id === taskId ? { ...task, ...response.task } : task,
+          ),
+        },
       }));
-      
+
       return response;
     } catch (error) {
-      console.error('Error updating task:', error);
+      console.error("Error updating task:", error);
       throw error;
     }
   },
 
   deleteTask: async (boardId, listId, taskId) => {
     const token = useAuthStore.getState().token;
-    
+
     try {
       await deleteTask(token, boardId, listId, taskId);
-      
+
       // Remove the task from state
       set((state) => ({
         tasksByList: {
           ...state.tasksByList,
-          [listId]: (state.tasksByList[listId] || []).filter(task => task._id !== taskId)
-        }
+          [listId]: (state.tasksByList[listId] || []).filter(
+            (task) => task._id !== taskId,
+          ),
+        },
       }));
     } catch (error) {
-      console.error('Error deleting task:', error);
+      console.error("Error deleting task:", error);
       throw error;
     }
   },
 
   reorderTasks: async (boardId, listId, orderedTaskIds) => {
     const token = useAuthStore.getState().token;
-    
+
     try {
       await reorderTasks(token, boardId, listId, orderedTaskIds);
-      
+
       // Reorder tasks in state
       set((state) => {
-        const tasksMap = new Map((state.tasksByList[listId] || []).map(task => [task._id, task]));
-        const reorderedTasks = orderedTaskIds.map(id => tasksMap.get(id)).filter(Boolean);
-        
+        const tasksMap = new Map(
+          (state.tasksByList[listId] || []).map((task) => [task._id, task]),
+        );
+        const reorderedTasks = orderedTaskIds
+          .map((id) => tasksMap.get(id))
+          .filter(Boolean);
+
         return {
           tasksByList: {
             ...state.tasksByList,
-            [listId]: reorderedTasks
-          }
+            [listId]: reorderedTasks,
+          },
         };
       });
     } catch (error) {
-      console.error('Error reordering tasks:', error);
+      console.error("Error reordering tasks:", error);
       throw error;
     }
   },
@@ -357,11 +382,7 @@ export const useBoardPageStore = create((set, get) => ({
   refreshTasks: async (boardId, listId) => {
     const token = useAuthStore.getState().token;
 
-    const res = await getListTasks(
-      token,
-      boardId,
-      listId
-    );
+    const res = await getListTasks(token, boardId, listId);
 
     set((state) => ({
       tasksByList: {

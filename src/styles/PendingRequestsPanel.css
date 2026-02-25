@@ -1,0 +1,204 @@
+/* PendingRequestsPanel.css */
+/* Place in src/styles/PendingRequestsPanel.css */
+
+.pending-panel {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 320px;
+  background: var(--surface, #1e1e2e);
+  border: 1px solid var(--border, rgba(255,255,255,0.08));
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.35);
+  z-index: 200;
+  overflow: hidden;
+  animation: panelFadeIn 0.15s ease;
+}
+
+@keyframes panelFadeIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Header ── */
+.pending-panel__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border, rgba(255,255,255,0.08));
+}
+
+.pending-panel__title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary, #e4e4f0);
+}
+
+.pending-panel__badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 9px;
+  background: #f97316;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.pending-panel__close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border: none;
+  background: transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  color: var(--text-secondary, #888);
+  transition: background 0.15s, color 0.15s;
+}
+.pending-panel__close:hover {
+  background: rgba(255,255,255,0.06);
+  color: var(--text-primary, #e4e4f0);
+}
+
+/* ── Body ── */
+.pending-panel__body {
+  max-height: 340px;
+  overflow-y: auto;
+}
+
+/* ── Empty state ── */
+.pending-panel__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 32px 16px;
+  color: var(--text-secondary, #888);
+}
+.pending-panel__empty p {
+  font-size: 13px;
+  margin: 0;
+}
+
+/* ── List ── */
+.pending-panel__list {
+  list-style: none;
+  margin: 0;
+  padding: 6px 0;
+}
+
+.pending-panel__item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 14px;
+  transition: background 0.12s;
+}
+.pending-panel__item:hover {
+  background: rgba(255,255,255,0.04);
+}
+
+/* ── Avatar ── */
+.pending-panel__avatar {
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.1);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary, #e4e4f0);
+}
+.pending-panel__avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ── Info ── */
+.pending-panel__info {
+  flex: 1;
+  min-width: 0;
+}
+.pending-panel__name {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary, #e4e4f0);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.pending-panel__email {
+  margin: 2px 0 0;
+  font-size: 11px;
+  color: var(--text-secondary, #888);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Action buttons ── */
+.pending-panel__actions {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.pending-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s;
+}
+.pending-btn:active { transform: scale(0.92); }
+.pending-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.pending-btn--approve {
+  background: rgba(34, 197, 94, 0.15);
+  color: #22c55e;
+}
+.pending-btn--approve:hover:not(:disabled) {
+  background: rgba(34, 197, 94, 0.28);
+}
+
+.pending-btn--reject {
+  background: rgba(239, 68, 68, 0.12);
+  color: #ef4444;
+}
+.pending-btn--reject:hover:not(:disabled) {
+  background: rgba(239, 68, 68, 0.24);
+}
+
+/* ── Spinner ── */
+.pending-btn__spinner {
+  width: 12px;
+  height: 12px;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
