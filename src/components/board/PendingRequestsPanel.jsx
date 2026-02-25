@@ -1,5 +1,3 @@
-// PendingRequestsPanel.jsx
-// Drop this alongside BoardTopBar and render it conditionally when isAdmin=true
 
 import { useState } from "react"
 import { useBoardPageStore } from "../../store/boardPage.store"
