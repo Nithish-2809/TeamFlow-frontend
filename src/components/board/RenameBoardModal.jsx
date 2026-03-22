@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from "react"
-import { useAuthStore } from "../../store/auth.store"
-import { useBoardPageStore } from "../../store/boardPage.store"
+import { useBoardStore } from "../../store/board.store"   
 import "../../styles/RenameBoardModal.css"
 
 const RenameBoardModal = ({ isOpen, onClose, boardId, currentName, onSuccess }) => {
@@ -8,15 +7,14 @@ const RenameBoardModal = ({ isOpen, onClose, boardId, currentName, onSuccess }) 
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
   const inputRef = useRef(null)
-  
-  const token = useAuthStore((state) => state.token)
+
+  const renameBoard = useBoardStore((state) => state.renameBoard)  
 
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden'
       setNewName(currentName)
       setError("")
-      // Focus input after modal animation
       setTimeout(() => {
         inputRef.current?.focus()
         inputRef.current?.select()
@@ -32,25 +30,22 @@ const RenameBoardModal = ({ isOpen, onClose, boardId, currentName, onSuccess }) 
 
   useEffect(() => {
     const handleEscape = (e) => {
-      if (e.key === 'Escape' && isOpen) {
-        onClose()
-      }
+      if (e.key === 'Escape' && isOpen) onClose()
     }
-
     document.addEventListener('keydown', handleEscape)
     return () => document.removeEventListener('keydown', handleEscape)
   }, [isOpen, onClose])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    
+
     const trimmedName = newName.trim()
-    
+
     if (!trimmedName) {
       setError("Board name cannot be empty")
       return
     }
-    
+
     if (trimmedName === currentName) {
       onClose()
       return
@@ -65,36 +60,11 @@ const RenameBoardModal = ({ isOpen, onClose, boardId, currentName, onSuccess }) 
     setError("")
 
     try {
-      const response = await fetch(`http://localhost:2231/api/boards/${boardId}/rename`, {
-        method: 'PATCH',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ name: trimmedName })
-      })
-
-      const data = await response.json()
-
-      if (!response.ok) {
-        throw new Error(data.msg || 'Failed to rename board')
-      }
-
-      // Update local state
-      const { boardDetails } = useBoardPageStore.getState()
-      if (boardDetails) {
-        useBoardPageStore.setState({
-          boardDetails: {
-            ...boardDetails,
-            name: trimmedName
-          }
-        })
-      }
-
+      await renameBoard(boardId, trimmedName)  // ✅ clean — no fetch, no token, no manual setState
       onSuccess(trimmedName)
       onClose()
     } catch (err) {
-      setError(err.message)
+      setError(err.response?.data?.msg || err.message || "Failed to rename board")
     } finally {
       setLoading(false)
     }
@@ -142,15 +112,15 @@ const RenameBoardModal = ({ isOpen, onClose, boardId, currentName, onSuccess }) 
           </div>
 
           <div className="rename-modal-actions">
-            <button 
+            <button
               type="button"
-              className="modal-button modal-button-cancel" 
+              className="modal-button modal-button-cancel"
               onClick={onClose}
               disabled={loading}
             >
               Cancel
             </button>
-            <button 
+            <button
               type="submit"
               className="modal-button modal-button-primary"
               disabled={loading || !newName.trim() || newName.trim() === currentName}

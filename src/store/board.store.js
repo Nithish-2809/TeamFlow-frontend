@@ -8,7 +8,6 @@ const useBoardStore = create((set) => ({
   loading: false,
   error: null,
 
-  
   fetchBoards: async () => {
     try {
       set({ loading: true, error: null })
@@ -25,21 +24,37 @@ const useBoardStore = create((set) => ({
       })
     } catch (err) {
       set({
-        error: err.response?.msg || "Failed to fetch boards",
+        error: err.response?.data?.msg || "Failed to fetch boards",
         loading: false
       })
     }
   },
 
-
   createBoard: async (boardDetails) => {
     try {
       const token = useAuthStore.getState().token
-
       const res = await boardApi.createBoard(boardDetails, token)
 
       set((state) => ({
-        boards: [res.board, ...state.boards] 
+        boards: [res.board, ...state.boards]
+      }))
+
+      return res
+    } catch (err) {
+      throw err
+    }
+  },
+
+  renameBoard: async (boardId, newName) => {   
+    try {
+      const token = useAuthStore.getState().token
+      const res = await boardApi.renameBoard(token, boardId, { name: newName })
+
+    
+      set((state) => ({
+        boards: state.boards.map((board) =>
+          board._id === boardId ? { ...board, name: newName } : board
+        )
       }))
 
       return res
