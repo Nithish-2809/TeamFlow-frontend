@@ -4,6 +4,7 @@ import { useBoardPageStore } from "../store/boardPage.store"
 import BoardTopBar from "../components/board/BoardTopBar"
 import BoardMembersSidebar from "../components/board/BoardmembersSidebar"
 import BoardContent from "../components/board/BoardContent"
+import ChatSidebar from "../components/board/ChatSidebar"
 import '../styles/BoardPage.css'
 
 function BoardPage() {
@@ -11,39 +12,33 @@ function BoardPage() {
   const [showMembersSidebar, setShowMembersSidebar] = useState(false)
   const [showChatSidebar, setShowChatSidebar] = useState(false)
 
-  const { 
-    boardDetails, 
-    members,
-    loading, 
-    error, 
+  const {
+    boardDetails,
+    loading,
+    error,
     fetchBoardData,
     resetBoardState
   } = useBoardPageStore()
 
   useEffect(() => {
-    if (boardId) {
-      fetchBoardData(boardId)
-    }
-
-    return () => {
-      resetBoardState()
-    }
+    if (boardId) fetchBoardData(boardId)
+    return () => resetBoardState()
   }, [boardId, fetchBoardData, resetBoardState])
 
   const handleToggleMembers = () => {
-    setShowMembersSidebar(!showMembersSidebar)
+    setShowMembersSidebar((prev) => !prev)
     if (showChatSidebar) setShowChatSidebar(false)
   }
 
   const handleToggleChat = () => {
-    setShowChatSidebar(!showChatSidebar)
+    setShowChatSidebar((prev) => !prev)
     if (showMembersSidebar) setShowMembersSidebar(false)
   }
 
   if (loading) {
     return (
       <div className="board-page-loading">
-        <div className="loading-spinner"></div>
+        <div className="loading-spinner" />
         <p>Loading board...</p>
       </div>
     )
@@ -71,7 +66,7 @@ function BoardPage() {
 
   return (
     <div className="board-page">
-      {/* Top Bar */}
+
       <BoardTopBar
         boardId={boardId}
         boardName={boardDetails.name}
@@ -82,13 +77,14 @@ function BoardPage() {
         onToggleChat={handleToggleChat}
       />
 
-      {/* Main Board Content with Lists and Tasks */}
-      <BoardContent 
-        boardId={boardId} 
-        isAdmin={boardDetails.isAdmin}
-      />
+      
+      <div className={`board-main ${showChatSidebar ? "chat-open" : ""} ${showMembersSidebar ? "members-open" : ""}`}>
+        <BoardContent
+          boardId={boardId}
+          isAdmin={boardDetails.isAdmin}
+        />
+      </div>
 
-      {/* Members Sidebar */}
       <BoardMembersSidebar
         isOpen={showMembersSidebar}
         onClose={() => setShowMembersSidebar(false)}
@@ -96,16 +92,12 @@ function BoardPage() {
         isAdmin={boardDetails?.isAdmin || false}
       />
 
-      {/* Chat Sidebar (placeholder) */}
-      {showChatSidebar && (
-        <div className="chat-sidebar">
-          <div className="sidebar-overlay" onClick={() => setShowChatSidebar(false)}></div>
-          <div className="chat-sidebar-content">
-            <h3>Chat Sidebar</h3>
-            <p>Chat functionality coming soon...</p>
-          </div>
-        </div>
-      )}
+      <ChatSidebar
+        boardId={boardId}
+        isOpen={showChatSidebar}
+        onClose={() => setShowChatSidebar(false)}
+      />
+
     </div>
   )
 }

@@ -1,4 +1,6 @@
-/* BoardPage.css */
+/* ═══════════════════════════════════════════
+   BOARD PAGE
+═══════════════════════════════════════════ */
 
 .board-page {
   position: fixed;
@@ -12,53 +14,28 @@
   overflow: hidden;
 }
 
-.board-main-content {
+/* ── Main area below the topbar ── */
+/* This is the wrapper you add around BoardContent in BoardPage.jsx */
+.board-main {
   flex: 1;
-  overflow-y: auto;
-  overflow-x: auto;
-  position: relative;
-}
-
-.board-content-inner {
-  min-height: 100%;
-  padding: 24px;
-}
-
-.board-placeholder {
+  overflow: hidden;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 400px;
-  background: rgba(255, 255, 255, 0.6);
-  backdrop-filter: blur(10px);
-  border: 2px dashed rgba(9, 30, 66, 0.2);
-  border-radius: 16px;
-  padding: 60px 40px;
-  text-align: center;
+  transition: margin-right 0.22s ease;
 }
 
-.board-placeholder h3 {
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: 1.75rem;
-  font-weight: 700;
-  color: var(--neutral-800);
-  margin: 0 0 12px 0;
+.board-main.chat-open {
+  margin-right: 360px;
 }
 
-.board-placeholder p {
-  font-size: 1rem;
-  color: var(--neutral-600);
-  margin: 0;
+.board-main.members-open {
+  margin-right: 320px;
 }
 
-/* Loading State */
+/* ── Loading state ── */
 .board-page-loading {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  inset: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -68,32 +45,29 @@
 }
 
 .loading-spinner {
-  width: 50px;
-  height: 50px;
-  border: 4px solid rgba(0, 82, 204, 0.1);
+  width: 44px;
+  height: 44px;
+  border: 3px solid rgba(0, 82, 204, 0.12);
   border-top-color: var(--primary-blue);
   border-radius: 50%;
-  animation: spin 0.8s linear infinite;
+  animation: boardSpin 0.75s linear infinite;
 }
 
-@keyframes spin {
+@keyframes boardSpin {
   to { transform: rotate(360deg); }
 }
 
 .board-page-loading p {
-  font-family: 'DM Sans', sans-serif;
-  font-size: 1rem;
+  font-size: 0.9375rem;
   color: var(--neutral-600);
   font-weight: 500;
+  margin: 0;
 }
 
-/* Error State */
+/* ── Error state ── */
 .board-page-error {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  inset: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -104,77 +78,28 @@
 }
 
 .error-icon {
-  font-size: 4rem;
-  margin-bottom: 20px;
+  font-size: 3.5rem;
+  margin-bottom: 16px;
 }
 
 .board-page-error h2 {
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: 2rem;
+  font-size: 1.75rem;
   font-weight: 700;
   color: var(--neutral-900);
-  margin: 0 0 12px 0;
+  margin: 0 0 10px;
 }
 
 .board-page-error p {
-  font-size: 1rem;
+  font-size: 0.9375rem;
   color: var(--neutral-600);
   margin: 0;
-  max-width: 500px;
+  max-width: 480px;
 }
 
-/* Responsive */
+/* ── Responsive ── */
 @media (max-width: 768px) {
-  .board-content-inner {
-    padding: 16px;
+  .board-main.chat-open,
+  .board-main.members-open {
+    margin-right: 0;
   }
-
-  .board-placeholder {
-    padding: 40px 24px;
-    min-height: 300px;
-  }
-
-  .board-placeholder h3 {
-    font-size: 1.5rem;
-  }
-
-  .board-placeholder p {
-    font-size: 0.875rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .board-content-inner {
-    padding: 12px;
-  }
-
-  .board-placeholder {
-    padding: 32px 20px;
-  }
-
-  .board-placeholder h3 {
-    font-size: 1.25rem;
-  }
-}
-
-.board-page {
-  position: relative;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-.board-content {
-  flex: 1;
-  overflow-x: auto;
-  overflow-y: hidden;
-  padding: 20px;
-}
-
-.board-lists-container {
-  display: flex;
-  gap: 16px;
-  height: 100%;
-  align-items: flex-start;
 }

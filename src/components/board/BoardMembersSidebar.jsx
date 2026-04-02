@@ -224,19 +224,14 @@ function BoardMembersSidebar({ isOpen, onClose, boardId, isAdmin }) {
                             onClick={() => openMakeAdminConfirm(member)}
                             title="Make Admin"
                           >
-                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                              <path d="M8 2L9.5 6.5H14L10.5 9.5L12 14L8 11L4 14L5.5 9.5L2 6.5H6.5L8 2Z" fill="currentColor"/>
-                            </svg>
+                            Make Admin
                           </button>
                           <button 
                             className="action-btn remove-btn"
                             onClick={() => openRemoveConfirm(member)}
                             title="Remove from Board"
                           >
-                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                              <path d="M10 6L6 10M6 6L10 10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                              <circle cx="8" cy="8" r="6.5" stroke="currentColor" strokeWidth="1.5"/>
-                            </svg>
+                            Remove
                           </button>
                         </div>
                       )}

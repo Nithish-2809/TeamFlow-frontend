@@ -6,6 +6,42 @@ import "../../styles/ChatSidebar.css"
 
 const TYPING_STOP_DELAY = 1500
 
+// ── Tick icons ──
+const SingleTick = () => (
+  <svg className="tick-icon tick-sent" width="14" height="10" viewBox="0 0 14 10" fill="none">
+    <path d="M1 5L4.5 8.5L13 1" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+)
+
+const DoubleTick = ({ read }) => (
+  <svg className={`tick-icon ${read ? "tick-read" : "tick-sent"}`} width="18" height="10" viewBox="0 0 18 10" fill="none">
+    <path d="M1 5L4.5 8.5L10 1" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M6 5L9.5 8.5L17 1" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+)
+
+// ── Avatar — matches BoardMembersSidebar style ──
+const ChatAvatar = ({ sender }) => {
+  const [imgError, setImgError] = useState(false)
+
+  if (sender?.profilePic && !imgError) {
+    return (
+      <img
+        className="chat-avatar"
+        src={sender.profilePic}
+        alt={sender?.userName}
+        onError={() => setImgError(true)}
+      />
+    )
+  }
+
+  return (
+    <div className="chat-avatar chat-avatar-default">
+      {sender?.userName?.[0]?.toUpperCase() || "?"}
+    </div>
+  )
+}
+
 function ChatSidebar({ boardId, isOpen, onClose }) {
   const { user } = useAuthStore()
   const {
@@ -25,39 +61,36 @@ function ChatSidebar({ boardId, isOpen, onClose }) {
 
   const [text, setText] = useState("")
   const bottomRef = useRef(null)
-  const topRef = useRef(null)
   const typingTimerRef = useRef(null)
   const isTypingRef = useRef(false)
 
-  // Connect socket + subscribe
+  // ── Socket setup ──
   useEffect(() => {
-    if (!isOpen || !boardId || !user) return
-
+    if (!isOpen || !boardId || !user?._id) return
     connectSocket(user._id)
     subscribeToBoard(boardId)
     fetchChatHistory(boardId)
-
     return () => {
       unsubscribeFromBoard(boardId)
       resetChat()
     }
   }, [isOpen, boardId, user?._id])
 
-  // Scroll to bottom on new messages
+  // ── Scroll to bottom on new messages ──
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" })
   }, [messages])
 
-  // Mark visible messages as read
+  // ── Mark as read ──
   useEffect(() => {
-    if (!messages.length || !user) return
+    if (!messages.length || !user?._id) return
     const unread = messages
       .filter((m) => m.sender?._id !== user._id && !m.readBy?.includes(user._id))
       .map((m) => m._id)
-    if (unread.length) markRead(boardId, unread, user._id)
+    if (unread.length) markRead(boardId, unread)
   }, [messages])
 
-  // Infinite scroll — load older messages when scrolled to top
+  // ── Infinite scroll ──
   const handleScroll = useCallback(
     (e) => {
       if (e.target.scrollTop < 60 && hasMore && !loadingHistory) {
@@ -71,12 +104,12 @@ function ChatSidebar({ boardId, isOpen, onClose }) {
     setText(e.target.value)
     if (!isTypingRef.current) {
       isTypingRef.current = true
-      sendTypingStart(boardId, user._id)
+      sendTypingStart(boardId)
     }
     clearTimeout(typingTimerRef.current)
     typingTimerRef.current = setTimeout(() => {
       isTypingRef.current = false
-      sendTypingStop(boardId, user._id)
+      sendTypingStop(boardId)
     }, TYPING_STOP_DELAY)
   }
 
@@ -84,11 +117,11 @@ function ChatSidebar({ boardId, isOpen, onClose }) {
     e.preventDefault()
     const trimmed = text.trim()
     if (!trimmed) return
-    sendMessage(boardId, trimmed, user._id)
+    sendMessage(boardId, trimmed)
     setText("")
     clearTimeout(typingTimerRef.current)
     isTypingRef.current = false
-    sendTypingStop(boardId, user._id)
+    sendTypingStop(boardId)
   }
 
   const handleKeyDown = (e) => {
@@ -100,95 +133,127 @@ function ChatSidebar({ boardId, isOpen, onClose }) {
 
   const isOwnMessage = (msg) => msg.sender?._id === user?._id
 
+  const getTickStatus = (msg) => {
+    const readBy = msg.readBy || []
+    const othersRead = readBy.filter((id) => id !== user?._id)
+    if (othersRead.length > 0) return "read"
+    if (readBy.includes(user?._id)) return "sent"
+    return "sending"
+  }
+
   if (!isOpen) return null
 
   return (
-    <div className="chat-sidebar-wrapper">
-      <div className="sidebar-overlay" onClick={onClose} />
-      <div className="chat-sidebar">
-        {/* Header */}
-        <div className="chat-sidebar-header">
-          <h3>Board Chat</h3>
-          <button className="chat-close-btn" onClick={onClose}>
-            <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-              <path d="M13.5 4.5L4.5 13.5M4.5 4.5L13.5 13.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
-            </svg>
-          </button>
-        </div>
+    <div className="chat-sidebar">
 
-        {/* Messages */}
-        <div className="chat-messages" onScroll={handleScroll}>
-          {loadingHistory && (
-            <div className="chat-loading">
-              <div className="chat-spinner" />
-            </div>
-          )}
+      {/* ── Header ── */}
+      <div className="chat-sidebar-header">
+        <h3>Board Chat</h3>
+        <button className="chat-close-btn" onClick={onClose}>
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+            <path d="M13.5 4.5L4.5 13.5M4.5 4.5L13.5 13.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
+          </svg>
+        </button>
+      </div>
 
-          {messages.map((msg, i) => {
-            const own = isOwnMessage(msg)
-            const prevMsg = messages[i - 1]
-            const showAvatar = !own && msg.sender?._id !== prevMsg?.sender?._id
+      {/* ── Messages ── */}
+      <div className="chat-messages" onScroll={handleScroll}>
 
-            return (
-              <div key={msg._id} className={`chat-message ${own ? "own" : "other"}`}>
-                {showAvatar && (
-                  <img
-                    className="chat-avatar"
-                    src={msg.sender?.profilePic || "/default-avatar.png"}
-                    alt={msg.sender?.userName}
-                  />
+        {loadingHistory && (
+          <div className="chat-loading">
+            <div className="chat-spinner" />
+          </div>
+        )}
+
+        {messages.length === 0 && !loadingHistory && (
+          <div className="chat-empty">
+            <p>No messages yet. Say something!</p>
+          </div>
+        )}
+
+        {messages.map((msg, i) => {
+          const own = isOwnMessage(msg)
+          const prevMsg = messages[i - 1]
+          const showAvatar = !own && msg.sender?._id !== prevMsg?.sender?._id
+          const newSender = msg.sender?._id !== prevMsg?.sender?._id
+          const tickStatus = own ? getTickStatus(msg) : null
+
+          return (
+            <div
+              key={msg._id}
+              className={`chat-message ${own ? "own" : "other"} ${newSender ? "new-sender" : ""}`}
+            >
+              {/* Avatar — only for others */}
+              {!own && (
+                showAvatar
+                  ? <ChatAvatar sender={msg.sender} />
+                  : <div className="chat-avatar-spacer" />
+              )}
+
+              <div className="chat-bubble-group">
+                {/* Username — only on first message in a group */}
+                {showAvatar && !own && (
+                  <span className="chat-username">{msg.sender?.userName}</span>
                 )}
-                {!showAvatar && !own && <div className="chat-avatar-spacer" />}
-                <div className="chat-bubble-group">
-                  {showAvatar && (
-                    <span className="chat-username">{msg.sender?.userName}</span>
-                  )}
-                  <div className="chat-bubble">
-                    <span className="chat-text">{msg.msg}</span>
+
+                <div className="chat-bubble">
+                  <span className="chat-text">{msg.msg}</span>
+
+                  {/* Time + ticks */}
+                  <div className="chat-meta">
                     <span className="chat-time">{formatTime(msg.createdAt)}</span>
+                    {own && (
+                      <span className="chat-ticks">
+                        {tickStatus === "sending" && <SingleTick />}
+                        {tickStatus === "sent"    && <DoubleTick read={false} />}
+                        {tickStatus === "read"    && <DoubleTick read={true}  />}
+                      </span>
+                    )}
                   </div>
                 </div>
               </div>
-            )
-          })}
-
-          {/* Typing indicator */}
-          {typingUsers.length > 0 && (
-            <div className="chat-typing-indicator">
-              <span className="typing-dots">
-                <span /><span /><span />
-              </span>
-              <span className="typing-text">
-                {typingUsers.length === 1 ? "Someone is typing..." : "Several people are typing..."}
-              </span>
             </div>
-          )}
+          )
+        })}
 
-          <div ref={bottomRef} />
-        </div>
+        {/* ── Typing indicator — WhatsApp bubble ── */}
+        {typingUsers.length > 0 && (
+          <div className="chat-message other new-sender">
+            <div className="chat-avatar-spacer" />
+            <div className="chat-bubble-group">
+              <div className="chat-bubble typing-bubble">
+                <div className="typing-dots">
+                  <span /><span /><span />
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
-        {/* Input */}
-        <form className="chat-input-form" onSubmit={handleSend}>
-          <textarea
-            className="chat-input"
-            value={text}
-            onChange={handleTyping}
-            onKeyDown={handleKeyDown}
-            placeholder="Message the board..."
-            rows={1}
-            maxLength={1000}
-          />
-          <button
-            type="submit"
-            className="chat-send-btn"
-            disabled={!text.trim()}
-          >
-            <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-              <path d="M16.5 1.5L8.25 9.75M16.5 1.5L11.25 16.5L8.25 9.75L1.5 6.75L16.5 1.5Z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </button>
-        </form>
+        <div ref={bottomRef} />
       </div>
+
+      {/* ── Input ── */}
+      <form className="chat-input-form" onSubmit={handleSend}>
+        <textarea
+          className="chat-input"
+          value={text}
+          onChange={handleTyping}
+          onKeyDown={handleKeyDown}
+          placeholder="Message the board..."
+          rows={1}
+          maxLength={1000}
+        />
+        <button type="submit" className="chat-send-btn" disabled={!text.trim()}>
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+            <path
+              d="M16.5 1.5L8.25 9.75M16.5 1.5L11.25 16.5L8.25 9.75L1.5 6.75L16.5 1.5Z"
+              stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"
+            />
+          </svg>
+        </button>
+      </form>
+
     </div>
   )
 }

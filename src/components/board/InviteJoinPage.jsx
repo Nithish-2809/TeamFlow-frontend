@@ -21,8 +21,9 @@ function InviteJoinPage() {
     const validateToken = async () => {
       try {
         const response = await validateInviteToken(token)
+        console.log("validate response:", response)
         setInviteValid(true)
-        setBoardName(response.boardName || "this board")
+        setBoardName(response.board.name || "this board")
       } catch (error) {
         setInviteValid(false)
         setToast({

@@ -388,19 +388,19 @@
 
 /* Make Admin Button */
 .make-admin-btn {
-  background: linear-gradient(135deg, rgba(255, 171, 0, 0.12) 0%, rgba(255, 153, 31, 0.08) 100%);
+  background: lime;
   color: var(--warning);
-  border: 2px solid rgba(255, 153, 31, 0.2);
+  border: 2px solid rgba(18, 231, 82, 0.2);
 }
 
 .make-admin-btn::before {
-  background: linear-gradient(135deg, var(--warning) 0%, var(--warning-light) 100%);
+  background: lime;
 }
 
 .make-admin-btn:hover {
-  border-color: var(--warning);
+  border-color: lime;
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(255, 153, 31, 0.3);
+  box-shadow: 0 6px 16px rgba(75, 241, 20, 0.904);
 }
 
 .make-admin-btn:hover svg {

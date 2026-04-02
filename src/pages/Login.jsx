@@ -7,6 +7,8 @@ import "../styles/Login.css"
 
 const Login = () => {
   const navigate = useNavigate()
+
+  const redirectTo = new URLSearchParams(window.location.search).get("redirect") || "/"
   const [form, setForm] = useState({
     email: "",
     password: ""
@@ -39,7 +41,7 @@ const Login = () => {
       await loginAndSetAuth(form)
       showToast("Login successful! Redirecting...", "success")
       setTimeout(() => {
-        navigate("/")
+        navigate(redirectTo, { replace: true })
       }, 1500)
     } catch (err) {
       const errorMessage = err.response?.data?.msg || "Login failed. Please try again."
@@ -64,7 +66,7 @@ const Login = () => {
       await googleLoginAndSetAuth(credentialResponse.credential)
       showToast("Login successful! Redirecting...", "success")
       setTimeout(() => {
-        navigate("/",{replace : true})
+        navigate(redirectTo, { replace: true })
       }, 1500)
     } catch (err) {
       const errorMessage = err.response?.data?.msg || "Google login failed. Please try again."

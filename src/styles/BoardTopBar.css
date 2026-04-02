@@ -7,7 +7,7 @@
   --primary-blue-dark: #0747A6;
   --primary-blue-light: #2684FF;
   --primary-blue-lighter: #4C9AFF;
-  
+
   --neutral-900: #091E42;
   --neutral-800: #172B4D;
   --neutral-700: #253858;
@@ -20,27 +20,27 @@
   --neutral-50: #EBECF0;
   --neutral-25: #F4F5F7;
   --white: #FFFFFF;
-  
+
   --error: #DE350B;
-  
+
   --space-xs: 0.25rem;
   --space-sm: 0.5rem;
   --space-md: 1rem;
   --space-lg: 1.5rem;
   --space-xl: 2rem;
-  
+
   --radius-sm: 4px;
   --radius-md: 6px;
   --radius-lg: 8px;
   --radius-xl: 12px;
   --radius-full: 9999px;
-  
+
   --shadow-xs: 0 1px 2px rgba(9, 30, 66, 0.08);
   --shadow-sm: 0 2px 4px rgba(9, 30, 66, 0.08), 0 0 1px rgba(9, 30, 66, 0.1);
   --shadow-md: 0 4px 8px rgba(9, 30, 66, 0.1), 0 0 1px rgba(9, 30, 66, 0.12);
   --shadow-lg: 0 8px 16px rgba(9, 30, 66, 0.12), 0 0 1px rgba(9, 30, 66, 0.15);
   --shadow-xl: 0 12px 24px rgba(9, 30, 66, 0.15), 0 0 1px rgba(9, 30, 66, 0.18);
-  
+
   --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
   --transition-base: 200ms cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -56,7 +56,7 @@
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border-bottom: 1px solid rgba(223, 225, 230, 0.6);
-  box-shadow: 
+  box-shadow:
     0 2px 8px rgba(9, 30, 66, 0.08),
     0 0 0 1px rgba(255, 255, 255, 0.3);
   position: sticky;
@@ -73,6 +73,7 @@
   align-items: center;
   gap: var(--space-md);
   flex: 1;
+  min-width: 0;
 }
 
 .board-logo {
@@ -185,7 +186,7 @@
   background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-blue-light) 100%);
   border: none;
   color: var(--white);
-  box-shadow: 
+  box-shadow:
     0 2px 8px rgba(0, 82, 204, 0.25),
     inset 0 -1px 0 rgba(0, 0, 0, 0.1);
   position: relative;
@@ -211,7 +212,7 @@
 }
 
 .topbar-btn-primary:hover {
-  box-shadow: 
+  box-shadow:
     0 4px 12px rgba(0, 82, 204, 0.35),
     inset 0 -1px 0 rgba(0, 0, 0, 0.1);
 }
@@ -348,9 +349,54 @@
   margin: var(--space-sm) 0;
 }
 
-/* ==================== RESPONSIVE DESIGN ==================== */
+/* ── Items only shown when collapsed into the three-dot menu ── */
+.dropdown-item--collapsed {
+  display: none;
+}
+
+/* ==================== PENDING REQUESTS BUTTON ==================== */
+
+.topbar-btn--pending {
+  position: relative;
+}
+
+.topbar-btn__badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 8px;
+  background: #f97316;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+  margin-left: 2px;
+}
+
+/* Badge variant inside dropdown items */
+.dropdown-item__badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 8px;
+  background: #f97316;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+  margin-left: auto;
+}
+
+/* ==================== RESPONSIVE – TABLET (≤1024px) ==================== */
 
 @media (max-width: 1024px) {
+  /* Shrink topbar label text on buttons */
   .topbar-btn span {
     display: none;
   }
@@ -370,6 +416,8 @@
     display: none;
   }
 }
+
+/* ==================== RESPONSIVE – MOBILE (≤768px) ==================== */
 
 @media (max-width: 768px) {
   .board-topbar {
@@ -394,15 +442,26 @@
     font-size: 1.25rem;
   }
 
-  /* Hide some buttons on mobile */
-  .topbar-btn:not(.topbar-btn-primary) {
+  /*
+   * Hide the standalone topbar buttons (Members, Invite, Chat, Requests).
+   * They will be accessible via the three-dot dropdown instead.
+   */
+  .topbar-btn {
     display: none;
   }
 
+  /* Keep the three-dot menu button visible */
   .topbar-icon-btn {
     display: flex;
   }
+
+  /* Reveal the collapsed items inside the dropdown */
+  .dropdown-item--collapsed {
+    display: flex;
+  }
 }
+
+/* ==================== RESPONSIVE – SMALL MOBILE (≤480px) ==================== */
 
 @media (max-width: 480px) {
   .board-topbar {
@@ -443,28 +502,4 @@
 button:focus-visible {
   outline: 2px solid var(--primary-blue);
   outline-offset: 2px;
-}
-
-/* ── ADD THESE TO YOUR EXISTING BoardTopBar.css ── */
-
-/* Pending requests button – same base as .topbar-btn but with badge support */
-.topbar-btn--pending {
-  position: relative; /* needed for badge positioning */
-}
-
-/* Orange notification badge on the topbar button */
-.topbar-btn__badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 16px;
-  height: 16px;
-  padding: 0 4px;
-  border-radius: 8px;
-  background: #f97316;
-  color: #fff;
-  font-size: 10px;
-  font-weight: 700;
-  line-height: 1;
-  margin-left: 2px;
 }

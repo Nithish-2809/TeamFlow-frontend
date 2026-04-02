@@ -5,12 +5,12 @@ import { useAuthStore } from "./auth.store"
 
 export const useChatStore = create((set, get) => ({
   // ── state ──────────────────────────────────────────
-  messages: [],           // active board chat messages
-  boardChats: [],         // sidebar board chat list
-  dmChats: [],            // sidebar DM list
-  typingUsers: [],        // userIds currently typing in active board
-  hasMore: true,          // pagination
-  oldestCursor: null,     // cursor for loading older messages
+  messages: [],
+  boardChats: [],
+  dmChats: [],
+  typingUsers: [],
+  hasMore: true,
+  oldestCursor: null,
   loadingHistory: false,
   loadingChats: false,
   activeBoardId: null,
@@ -75,8 +75,10 @@ export const useChatStore = create((set, get) => ({
     }
   },
 
-  // ── socket actions ─────────────────────────────────
-  sendMessage: (boardId, content, userId) => {
+  // ── socket actions — userId always read from store, never passed in ──
+  sendMessage: (boardId, content) => {
+    const userId = useAuthStore.getState().user?._id
+    if (!userId) return
     getSocket().emit("chat:send", { content, boardId, userId })
   },
 
@@ -84,28 +86,38 @@ export const useChatStore = create((set, get) => ({
     getSocket().emit("chat:send:dm", { content, receiverId, boardId })
   },
 
-  markRead: (boardId, messageIds, userId) => {
-    if (!messageIds.length) return
+  markRead: (boardId, messageIds) => {
+    const userId = useAuthStore.getState().user?._id
+    if (!userId || !messageIds.length) return
     getSocket().emit("chat:markRead", { messageIds, boardId, userId })
   },
 
-  sendTypingStart: (boardId, userId) => {
+  sendTypingStart: (boardId) => {
+    const userId = useAuthStore.getState().user?._id
+    if (!userId) return
     getSocket().emit("chat:typing:start", { boardId, userId })
   },
 
-  sendTypingStop: (boardId, userId) => {
+  sendTypingStop: (boardId) => {
+    const userId = useAuthStore.getState().user?._id
+    if (!userId) return
     getSocket().emit("chat:typing:stop", { boardId, userId })
   },
 
-  // ── socket listeners (call once per board) ─────────
+  // ── socket listeners ───────────────────────────────
   subscribeToBoard: (boardId) => {
     const socket = getSocket()
 
     socket.emit("joinBoard", boardId)
 
+    // Remove any previous listeners to avoid duplicates on re-subscribe
+    socket.off("chat:newMessage")
+    socket.off("chat:typing")
+    socket.off("chat:updateRead")
+    socket.off("dm:newMessage")
+
     socket.on("chat:newMessage", ({ message }) => {
-      const { activeBoardId } = get()
-      if (message.boardId !== activeBoardId && message.boardId !== boardId) return
+      // No boardId filter — stale closure causes missed messages
       set((state) => ({ messages: [...state.messages, message] }))
     })
 
@@ -128,7 +140,7 @@ export const useChatStore = create((set, get) => ({
     })
 
     socket.on("dm:newMessage", ({ message }) => {
-      set((state) => ({ dmChats: state.dmChats })) // trigger re-fetch or optimistic update
+      // TODO: optimistic dm update
     })
   },
 

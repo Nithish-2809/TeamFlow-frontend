@@ -1,4 +1,4 @@
-// BoardTopBar.jsx  (updated – only the diff from your original is annotated)
+// BoardTopBar.jsx
 import { useState, useRef, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import { useBoardPageStore } from "../../store/boardPage.store"
@@ -6,7 +6,6 @@ import ConfirmationModal from "../modals/Confirmationmodal"
 import InviteModal from "../modals/InviteModal"
 import RenameBoardModal from "./RenameBoardModal"
 import Toast from "../modals/Toast"
-// ↓ NEW
 import PendingRequestsPanel from "./PendingRequestsPanel"
 import "../../styles/BoardTopBar.css"
 
@@ -30,7 +29,7 @@ function BoardTopBar({
   const [showLeaveConfirm, setShowLeaveConfirm] = useState(false)
   const [showAdminLeaveWarning, setShowAdminLeaveWarning] = useState(false)
 
-  // ↓ NEW – pending panel
+  // Pending panel
   const [showPendingPanel, setShowPendingPanel] = useState(false)
   const pendingPanelRef = useRef(null)
 
@@ -51,7 +50,7 @@ function BoardTopBar({
     return () => document.removeEventListener("mousedown", handleClickOutside)
   }, [showMenu])
 
-  // ↓ NEW – close pending panel when clicking outside
+  // Close pending panel when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
@@ -69,6 +68,7 @@ function BoardTopBar({
   const handleMenuToggle = () => setShowMenu(!showMenu)
 
   const handleInvite = async () => {
+    setShowMenu(false)
     if (!boardId) {
       setToast({ message: "Board ID is missing. Please refresh the page.", type: "error" })
       return
@@ -137,6 +137,21 @@ function BoardTopBar({
     setToast({ message: "Board settings coming soon!", type: "info" })
   }
 
+  const handleToggleMembers = () => {
+    setShowMenu(false)
+    onToggleMembers?.()
+  }
+
+  const handleToggleChat = () => {
+    setShowMenu(false)
+    onToggleChat?.()
+  }
+
+  const handleOpenPendingFromMenu = () => {
+    setShowMenu(false)
+    setShowPendingPanel(true)
+  }
+
   return (
     <>
       <div className="board-topbar">
@@ -155,8 +170,9 @@ function BoardTopBar({
 
         {/* RIGHT SECTION */}
         <div className="board-topbar-right">
-          {/* MEMBERS */}
-          <button className="topbar-btn" onClick={onToggleMembers}>
+
+          {/* MEMBERS – hidden on mobile, shown in dropdown */}
+          <button className="topbar-btn" onClick={handleToggleMembers}>
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
               <path d="M11 14V12.6667C11 11.9594 10.719 11.2811 10.219 10.781C9.71897 10.281 9.04058 10 8.33333 10H3.66667C2.95942 10 2.28103 10.281 1.78103 10.781C1.28103 11.2811 1 11.9594 1 12.6667V14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
               <circle cx="6" cy="4.5" r="2.5" stroke="currentColor" strokeWidth="1.5"/>
@@ -165,7 +181,7 @@ function BoardTopBar({
             <span>Members</span>
           </button>
 
-          {/* INVITE */}
+          {/* INVITE – hidden on mobile, shown in dropdown */}
           <button className="topbar-btn" onClick={handleInvite}>
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
               <path d="M11 14V12.6667C11 11.9594 10.719 11.2811 10.219 10.781C9.71897 10.281 9.04058 10 8.33333 10H4.66667C3.95942 10 3.28103 10.281 2.78103 10.781C2.28103 11.2811 2 11.9594 2 12.6667V14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
@@ -175,15 +191,15 @@ function BoardTopBar({
             <span>Invite</span>
           </button>
 
-          {/* CHAT */}
-          <button className="topbar-btn" onClick={onToggleChat}>
+          {/* CHAT – hidden on mobile, shown in dropdown */}
+          <button className="topbar-btn" onClick={handleToggleChat}>
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
               <path d="M14 10C14 10.3536 13.8595 10.6928 13.6095 10.9428C13.3594 11.1929 13.0203 11.3333 12.6667 11.3333H4.66667L2 14V3.33333C2 2.97971 2.14048 2.64057 2.39052 2.39052C2.64057 2.14048 2.97971 2 3.33333 2H12.6667C13.0203 2 13.3594 2.14048 13.6095 2.39052C13.8595 2.64057 14 2.97971 14 3.33333V10Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
             <span>Chat</span>
           </button>
 
-          {/* ↓ NEW – PENDING REQUESTS BELL (admin only) */}
+          {/* PENDING REQUESTS BELL (admin only) – hidden on mobile, shown in dropdown */}
           {isAdmin && (
             <div className="topbar-menu-wrapper" ref={pendingPanelRef} style={{ position: "relative" }}>
               <button
@@ -191,13 +207,11 @@ function BoardTopBar({
                 onClick={() => setShowPendingPanel((v) => !v)}
                 title="Join Requests"
               >
-                {/* Bell icon */}
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                   <path d="M8 1a5 5 0 0 0-5 5v2.5L1.5 10.5h13L13 8.5V6a5 5 0 0 0-5-5Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/>
                   <path d="M6.5 12.5a1.5 1.5 0 0 0 3 0" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
                 </svg>
                 <span>Requests</span>
-                {/* Badge */}
                 {pendingMembers.length > 0 && (
                   <span className="topbar-btn__badge">{pendingMembers.length}</span>
                 )}
@@ -224,6 +238,53 @@ function BoardTopBar({
 
             {showMenu && (
               <div className="topbar-dropdown">
+
+                {/*
+                  ── Mobile-only collapsed items (hidden on desktop via CSS) ──
+                  These mirror the standalone topbar buttons above.
+                */}
+                <button className="dropdown-item dropdown-item--collapsed" onClick={handleToggleMembers}>
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <path d="M11 14V12.6667C11 11.9594 10.719 11.2811 10.219 10.781C9.71897 10.281 9.04058 10 8.33333 10H3.66667C2.95942 10 2.28103 10.281 1.78103 10.781C1.28103 11.2811 1 11.9594 1 12.6667V14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    <circle cx="6" cy="4.5" r="2.5" stroke="currentColor" strokeWidth="1.5"/>
+                    <path d="M11 5.5C11.5933 5.5 12.1734 5.67595 12.6667 6.00559C13.1601 6.33524 13.5446 6.80377 13.7716 7.35195C13.9987 7.90013 14.0581 8.50333 13.9424 9.08527C13.8266 9.66721 13.5409 10.2018 13.1213 10.6213C12.7018 11.0409 12.1672 11.3266 11.5853 11.4424C11.0033 11.5581 10.4001 11.4987 9.85195 11.2716C9.30377 11.0446 8.83524 10.6601 8.50559 10.1667C8.17595 9.67339 8 9.09334 8 8.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                  </svg>
+                  <span>Members</span>
+                </button>
+
+                <button className="dropdown-item dropdown-item--collapsed" onClick={handleInvite}>
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <path d="M11 14V12.6667C11 11.9594 10.719 11.2811 10.219 10.781C9.71897 10.281 9.04058 10 8.33333 10H4.66667C3.95942 10 3.28103 10.281 2.78103 10.781C2.28103 11.2811 2 11.9594 2 12.6667V14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    <circle cx="6.5" cy="4.5" r="2.5" stroke="currentColor" strokeWidth="1.5"/>
+                    <path d="M11 5V9M9 7H13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                  </svg>
+                  <span>Invite</span>
+                </button>
+
+                <button className="dropdown-item dropdown-item--collapsed" onClick={handleToggleChat}>
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <path d="M14 10C14 10.3536 13.8595 10.6928 13.6095 10.9428C13.3594 11.1929 13.0203 11.3333 12.6667 11.3333H4.66667L2 14V3.33333C2 2.97971 2.14048 2.64057 2.39052 2.39052C2.64057 2.14048 2.97971 2 3.33333 2H12.6667C13.0203 2 13.3594 2.14048 13.6095 2.39052C13.8595 2.64057 14 2.97971 14 3.33333V10Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                  <span>Chat</span>
+                </button>
+
+                {isAdmin && (
+                  <button className="dropdown-item dropdown-item--collapsed" onClick={handleOpenPendingFromMenu}>
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                      <path d="M8 1a5 5 0 0 0-5 5v2.5L1.5 10.5h13L13 8.5V6a5 5 0 0 0-5-5Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/>
+                      <path d="M6.5 12.5a1.5 1.5 0 0 0 3 0" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                    </svg>
+                    <span>Join Requests</span>
+                    {pendingMembers.length > 0 && (
+                      <span className="dropdown-item__badge">{pendingMembers.length}</span>
+                    )}
+                  </button>
+                )}
+
+                {/* Divider between collapsed mobile items and permanent items */}
+                <div className="dropdown-divider dropdown-item--collapsed" />
+
+                {/* ── Always-visible dropdown items ── */}
                 <button className="dropdown-item" onClick={handleBoardSettings}>
                   <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                     <path d="M8 10C9.10457 10 10 9.10457 10 8C10 6.89543 9.10457 6 8 6C6.89543 6 6 6.89543 6 8C6 9.10457 6.89543 10 8 10Z" stroke="currentColor" strokeWidth="1.5"/>
