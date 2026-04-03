@@ -1,6 +1,6 @@
 import { useEffect } from "react"
 import { createPortal } from "react-dom"
-import "../../styles/ConfirmationModal.css"
+import "../../styles/Confirmationmodal.css"
 
 const ConfirmationModal = ({ 
   isOpen, 
