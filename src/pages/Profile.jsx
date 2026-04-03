@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { useAuthStore } from "../store/auth.store"
 import { editProfile } from "../api/auth.api"
-import ConfirmationModal from "../components/modals/Confirmationmodal"
+import ConfirmationModal from "../components/modals/ConfirmationModal"
 import "../styles/Profile.css"
 
 function Profile() {
