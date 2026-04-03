@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
 import { useBoardPageStore } from "../store/boardPage.store"
 import BoardTopBar from "../components/board/BoardTopBar"
-import BoardMembersSidebar from "../components/board/BoardmembersSidebar"
+import BoardMembersSidebar from "../components/board/BoardMembersSidebar"
 import BoardContent from "../components/board/BoardContent"
 import ChatSidebar from "../components/board/ChatSidebar"
 import '../styles/BoardPage.css'
