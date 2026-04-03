@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, useCallback } from "react"
 import { useChatStore } from "../../store/chat.store"
 import { useAuthStore } from "../../store/auth.store"
 import { connectSocket } from "../../socket/socket"
-import "../../styles/ChatSidebar.css"
+import "../../styles/Chatsidebar.css"
 
 const TYPING_STOP_DELAY = 1500
 
