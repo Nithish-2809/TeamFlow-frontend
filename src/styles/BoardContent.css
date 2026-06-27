@@ -1,37 +1,76 @@
-/* ═══════════════════════════════════════════
-   BOARD CONTENT
-═══════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════
+   BoardContent.css  —  Ivory Workspace · Board Canvas
+   Matches: Home · Navbar · BoardTopbar warm ivory system
+═══════════════════════════════════════════════════════ */
 
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700;1,9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
+/* ── Shared tokens ── */
+:root {
+  --terra:         #c45c2e;
+  --terra-soft:    rgba(196, 92, 46, 0.10);
+  --terra-glow:    rgba(196, 92, 46, 0.22);
+  --bg-base:       #f5f0e8;
+  --bg-card:       #fdfbf7;
+  --border-subtle: rgba(60, 45, 20, 0.08);
+  --border-mid:    rgba(60, 45, 20, 0.15);
+  --text-1:        #1a1208;
+  --ease:          cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ══════════════════════════════════════
+   BOARD CANVAS
+══════════════════════════════════════ */
 .board-content {
   flex: 1;
   overflow-x: auto;
   overflow-y: hidden;
-  padding: 24px;
+  padding: 28px;
   height: 100%;
+
+  /* Page ambient — dot grid on parchment */
+  background-image: radial-gradient(circle, rgba(60,45,20,0.10) 1px, transparent 1px);
+  background-size: 28px 28px;
+  background-color: var(--bg-base);
+
+  /* Warm radial ambient tints */
+  background-image:
+    radial-gradient(ellipse 65% 55% at 10% 15%, rgba(196,92,46,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 40% at 88% 85%, rgba(74,124,95,0.05) 0%, transparent 55%),
+    radial-gradient(circle, rgba(60,45,20,0.10) 1px, transparent 1px);
+  background-size: auto, auto, 28px 28px;
 }
 
+/* ══════════════════════════════════════
+   LISTS CONTAINER
+══════════════════════════════════════ */
 .board-lists-container {
   display: flex;
-  gap: 16px;
+  gap: 18px;
   height: 100%;
   align-items: flex-start;
-  padding-bottom: 24px;
+  padding-bottom: 28px;
 }
 
-/* ── Drag overlay ── */
+/* ══════════════════════════════════════
+   DRAG OVERLAY (floating ghost card)
+══════════════════════════════════════ */
 .list-drag-overlay {
   width: 300px;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(20px);
-  border: 2px solid var(--primary-blue);
-  border-radius: 12px;
+  background: var(--bg-card);
+  border: 1.5px solid rgba(196, 92, 46, 0.35);
+  border-radius: 16px;
   box-shadow:
-    0 12px 32px rgba(0, 82, 204, 0.25),
-    0 0 0 1px rgba(255, 255, 255, 0.9);
+    0 12px 40px rgba(60, 45, 20, 0.18),
+    0 4px 16px rgba(196, 92, 46, 0.14),
+    0 0 0 4px rgba(196, 92, 46, 0.08);
   padding: 16px;
-  transform: rotate(3deg);
+  transform: rotate(2.5deg) scale(1.02);
+
+  /* Dot texture inside ghost too */
+  background-image: radial-gradient(circle, rgba(60,45,20,0.07) 1px, transparent 1px);
+  background-size: 28px 28px;
+  background-color: var(--bg-card);
 }
 
 .list-drag-overlay .list-header {
@@ -41,55 +80,50 @@
 }
 
 .list-drag-overlay .list-header h3 {
+  font-family: 'Fraunces', serif;
   font-size: 1rem;
   font-weight: 700;
-  color: var(--neutral-900);
+  color: var(--text-1);
+  letter-spacing: -0.03em;
   margin: 0;
 }
 
-/* ── Horizontal scrollbar ── */
+/* ══════════════════════════════════════
+   SCROLLBAR — warm toned
+══════════════════════════════════════ */
 .board-content::-webkit-scrollbar {
-  height: 6px;
+  height: 5px;
 }
 
 .board-content::-webkit-scrollbar-track {
-  background: rgba(9, 30, 66, 0.04);
+  background: rgba(60, 45, 20, 0.05);
   border-radius: 6px;
-  margin: 0 24px;
+  margin: 0 28px;
 }
 
 .board-content::-webkit-scrollbar-thumb {
-  background: rgba(9, 30, 66, 0.18);
+  background: rgba(60, 45, 20, 0.16);
   border-radius: 6px;
 }
 
 .board-content::-webkit-scrollbar-thumb:hover {
-  background: rgba(9, 30, 66, 0.28);
+  background: var(--terra-soft);
+  background: rgba(196, 92, 46, 0.3);
 }
 
-/* ── Responsive ── */
+/* ══════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════ */
 @media (max-width: 768px) {
-  .board-content {
-    padding: 16px;
-  }
-
-  .board-lists-container {
-    gap: 12px;
-  }
+  .board-content         { padding: 18px; }
+  .board-lists-container { gap: 13px; }
 }
 
 @media (max-width: 480px) {
-  .board-content {
-    padding: 12px;
-  }
-
-  .board-lists-container {
-    gap: 8px;
-  }
+  .board-content         { padding: 12px; }
+  .board-lists-container { gap: 9px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .list-drag-overlay {
-    transform: none;
-  }
+  .list-drag-overlay { transform: none; }
 }

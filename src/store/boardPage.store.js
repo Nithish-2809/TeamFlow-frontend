@@ -351,6 +351,14 @@ export const useBoardPageStore = create((set, get) => ({
     }
   },
 
+  renameBoard: (newName) => {
+    set((state) => ({
+      boardDetails: state.boardDetails
+        ? { ...state.boardDetails, name: newName }
+        : state.boardDetails,
+    }));
+  },
+
   reorderTasks: async (boardId, listId, orderedTaskIds) => {
     const token = useAuthStore.getState().token;
 

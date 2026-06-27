@@ -1,12 +1,10 @@
 import { useEffect, useRef, useState, useCallback } from "react"
 import { useChatStore } from "../../store/chat.store"
 import { useAuthStore } from "../../store/auth.store"
-import { connectSocket } from "../../socket/socket"
 import "../../styles/Chatsidebar.css"
 
 const TYPING_STOP_DELAY = 1500
 
-// ── Tick icons ──
 const SingleTick = () => (
   <svg className="tick-icon tick-sent" width="14" height="10" viewBox="0 0 14 10" fill="none">
     <path d="M1 5L4.5 8.5L13 1" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
@@ -20,7 +18,6 @@ const DoubleTick = ({ read }) => (
   </svg>
 )
 
-// ── Avatar — matches BoardMembersSidebar style ──
 const ChatAvatar = ({ sender }) => {
   const [imgError, setImgError] = useState(false)
 
@@ -64,10 +61,8 @@ function ChatSidebar({ boardId, isOpen, onClose }) {
   const typingTimerRef = useRef(null)
   const isTypingRef = useRef(false)
 
-  // ── Socket setup ──
   useEffect(() => {
     if (!isOpen || !boardId || !user?._id) return
-    connectSocket(user._id)
     subscribeToBoard(boardId)
     fetchChatHistory(boardId)
     return () => {
@@ -76,12 +71,10 @@ function ChatSidebar({ boardId, isOpen, onClose }) {
     }
   }, [isOpen, boardId, user?._id])
 
-  // ── Scroll to bottom on new messages ──
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" })
   }, [messages])
 
-  // ── Mark as read ──
   useEffect(() => {
     if (!messages.length || !user?._id) return
     const unread = messages
@@ -90,7 +83,6 @@ function ChatSidebar({ boardId, isOpen, onClose }) {
     if (unread.length) markRead(boardId, unread)
   }, [messages])
 
-  // ── Infinite scroll ──
   const handleScroll = useCallback(
     (e) => {
       if (e.target.scrollTop < 60 && hasMore && !loadingHistory) {
@@ -145,8 +137,6 @@ function ChatSidebar({ boardId, isOpen, onClose }) {
 
   return (
     <div className="chat-sidebar">
-
-      {/* ── Header ── */}
       <div className="chat-sidebar-header">
         <h3>Board Chat</h3>
         <button className="chat-close-btn" onClick={onClose}>
@@ -156,9 +146,7 @@ function ChatSidebar({ boardId, isOpen, onClose }) {
         </button>
       </div>
 
-      {/* ── Messages ── */}
       <div className="chat-messages" onScroll={handleScroll}>
-
         {loadingHistory && (
           <div className="chat-loading">
             <div className="chat-spinner" />
@@ -183,7 +171,6 @@ function ChatSidebar({ boardId, isOpen, onClose }) {
               key={msg._id}
               className={`chat-message ${own ? "own" : "other"} ${newSender ? "new-sender" : ""}`}
             >
-              {/* Avatar — only for others */}
               {!own && (
                 showAvatar
                   ? <ChatAvatar sender={msg.sender} />
@@ -191,15 +178,12 @@ function ChatSidebar({ boardId, isOpen, onClose }) {
               )}
 
               <div className="chat-bubble-group">
-                {/* Username — only on first message in a group */}
                 {showAvatar && !own && (
                   <span className="chat-username">{msg.sender?.userName}</span>
                 )}
 
                 <div className="chat-bubble">
                   <span className="chat-text">{msg.msg}</span>
-
-                  {/* Time + ticks */}
                   <div className="chat-meta">
                     <span className="chat-time">{formatTime(msg.createdAt)}</span>
                     {own && (
@@ -216,7 +200,6 @@ function ChatSidebar({ boardId, isOpen, onClose }) {
           )
         })}
 
-        {/* ── Typing indicator — WhatsApp bubble ── */}
         {typingUsers.length > 0 && (
           <div className="chat-message other new-sender">
             <div className="chat-avatar-spacer" />
@@ -233,7 +216,6 @@ function ChatSidebar({ boardId, isOpen, onClose }) {
         <div ref={bottomRef} />
       </div>
 
-      {/* ── Input ── */}
       <form className="chat-input-form" onSubmit={handleSend}>
         <textarea
           className="chat-input"
@@ -253,7 +235,6 @@ function ChatSidebar({ boardId, isOpen, onClose }) {
           </svg>
         </button>
       </form>
-
     </div>
   )
 }

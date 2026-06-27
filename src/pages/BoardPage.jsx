@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
 import { useBoardPageStore } from "../store/boardPage.store"
+import { useAuthStore } from "../store/auth.store"
+import { connectSocket, getSocket } from "../socket/socket"
 import BoardTopBar from "../components/board/BoardTopBar"
 import BoardMembersSidebar from "../components/board/BoardMembersSidebar"
 import BoardContent from "../components/board/BoardContent"
@@ -9,6 +11,7 @@ import '../styles/BoardPage.css'
 
 function BoardPage() {
   const { boardId } = useParams()
+  const { user } = useAuthStore()
   const [showMembersSidebar, setShowMembersSidebar] = useState(false)
   const [showChatSidebar, setShowChatSidebar] = useState(false)
 
@@ -24,6 +27,26 @@ function BoardPage() {
     if (boardId) fetchBoardData(boardId)
     return () => resetBoardState()
   }, [boardId, fetchBoardData, resetBoardState])
+
+  useEffect(() => {
+    if (!boardId || !user?._id) return
+    const socket = connectSocket(user._id)
+
+    const join = () => {
+      socket.emit("joinBoard", boardId)
+    }
+
+    if (socket.connected) {
+      join()
+    } else {
+      socket.once("connect", join)
+    }
+
+    return () => {
+      socket.off("connect", join)
+      socket.emit("leaveBoard", boardId)
+    }
+  }, [boardId, user?._id])
 
   const handleToggleMembers = () => {
     setShowMembersSidebar((prev) => !prev)
@@ -66,7 +89,6 @@ function BoardPage() {
 
   return (
     <div className="board-page">
-
       <BoardTopBar
         boardId={boardId}
         boardName={boardDetails.name}
@@ -77,7 +99,6 @@ function BoardPage() {
         onToggleChat={handleToggleChat}
       />
 
-      
       <div className={`board-main ${showChatSidebar ? "chat-open" : ""} ${showMembersSidebar ? "members-open" : ""}`}>
         <BoardContent
           boardId={boardId}
@@ -97,7 +118,6 @@ function BoardPage() {
         isOpen={showChatSidebar}
         onClose={() => setShowChatSidebar(false)}
       />
-
     </div>
   )
 }

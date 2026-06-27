@@ -1,269 +1,337 @@
-/* Import Professional Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap');
+/* ═══════════════════════════════════════════════════════
+   ListMenu.css  —  Ivory Workspace · List Menu & Rename Modal
+   Matches: Home · Navbar · BoardTopbar · BoardContent
+═══════════════════════════════════════════════════════ */
 
-.list-menu-wrapper {
-  position: relative;
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700;1,9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --terra:         #c45c2e;
+  --terra-dark:    #a34a23;
+  --terra-soft:    rgba(196, 92, 46, 0.10);
+  --terra-glow:    rgba(196, 92, 46, 0.22);
+  --bg-base:       #f5f0e8;
+  --bg-card:       #fdfbf7;
+  --border-subtle: rgba(60, 45, 20, 0.08);
+  --border-mid:    rgba(60, 45, 20, 0.15);
+  --border-bright: rgba(60, 45, 20, 0.26);
+  --text-1:        #1a1208;
+  --text-2:        #5c4f38;
+  --text-3:        #a0907a;
+  --ease:          cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-back:     cubic-bezier(0.34, 1.56, 0.64, 1);
+  --r-sm:  6px;
+  --r-md:  10px;
+  --r-lg:  14px;
+  --r-xl:  18px;
 }
+
+/* ══════════════════════════════════════
+   THREE-DOT TRIGGER BUTTON
+══════════════════════════════════════ */
+.list-menu-wrapper { position: relative; }
 
 .list-menu-btn {
   width: 28px;
   height: 28px;
   background: transparent;
-  border: none;
-  border-radius: 6px;
+  border: 1px solid transparent;
+  border-radius: var(--r-sm);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--neutral-500);
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  color: var(--text-3);
+  transition:
+    background    0.18s var(--ease),
+    border-color  0.18s var(--ease),
+    color         0.18s var(--ease),
+    transform     0.18s var(--ease);
   flex-shrink: 0;
 }
 
 .list-menu-btn:hover {
-  background: rgba(9, 30, 66, 0.08);
-  color: var(--neutral-800);
+  background: var(--terra-soft);
+  border-color: rgba(196, 92, 46, 0.18);
+  color: var(--terra);
 }
 
-.list-menu-btn:active {
-  transform: scale(0.95);
-}
+.list-menu-btn:active { transform: scale(0.93); }
 
-/* Menu Overlay */
+/* ══════════════════════════════════════
+   TRANSPARENT CLICK-AWAY OVERLAY
+══════════════════════════════════════ */
 .menu-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  inset: 0;
   background: transparent;
   z-index: 999;
 }
 
-/* Dropdown Menu */
+/* ══════════════════════════════════════
+   DROPDOWN MENU
+══════════════════════════════════════ */
 .list-dropdown-menu {
   position: absolute;
-  top: calc(100% + 8px);
+  top: calc(100% + 6px);
   right: 0;
-  min-width: 180px;
-  background: rgba(255, 255, 255, 0.98);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 2px solid rgba(223, 225, 230, 0.8);
-  border-radius: 10px;
-  box-shadow: 
-    0 12px 32px rgba(9, 30, 66, 0.15),
-    0 0 0 1px rgba(255, 255, 255, 0.9);
-  padding: 8px;
+  min-width: 182px;
+  background: #fff;
+  border: 1.5px solid var(--border-mid);
+  border-radius: var(--r-lg);
+  box-shadow:
+    0 8px 32px rgba(60, 45, 20, 0.13),
+    0 2px 8px  rgba(60, 45, 20, 0.07);
+  padding: 6px;
   z-index: 1000;
-  animation: menuSlideIn 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  animation: menuSlideIn 0.2s var(--ease-back) both;
 }
 
 @keyframes menuSlideIn {
-  from {
-    opacity: 0;
-    transform: translateY(-8px) scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
+  from { opacity: 0; transform: translateY(-8px) scale(0.95); }
+  to   { opacity: 1; transform: translateY(0)   scale(1); }
 }
 
 .menu-item {
   width: 100%;
-  padding: 10px 14px;
+  padding: 9px 13px;
   background: transparent;
   border: none;
-  border-radius: 8px;
-  font-family: 'DM Sans', sans-serif;
+  border-radius: var(--r-sm);
+  font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 0.875rem;
   font-weight: 600;
-  color: var(--neutral-800);
+  color: var(--text-2);
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 10px;
-  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  gap: 9px;
+  transition:
+    background 0.14s var(--ease),
+    color      0.14s var(--ease),
+    transform  0.14s var(--ease);
   text-align: left;
 }
 
 .menu-item:hover {
-  background: rgba(9, 30, 66, 0.08);
-  color: var(--neutral-900);
-  transform: translateX(2px);
+  background: var(--bg-base);
+  color: var(--text-1);
+  transform: translateX(3px);
 }
 
 .menu-item svg {
   flex-shrink: 0;
+  color: var(--text-3);
+  transition: color 0.14s, transform 0.25s var(--ease-back);
 }
 
-.menu-item-danger {
-  color: var(--error);
+.menu-item:hover svg {
+  color: var(--terra);
+  transform: scale(1.12) rotate(-4deg);
 }
+
+/* Danger variant */
+.menu-item-danger { color: #c0392b; }
+.menu-item-danger svg { color: #c0392b; }
 
 .menu-item-danger:hover {
-  background: rgba(222, 53, 11, 0.08);
-  color: var(--error);
+  background: rgba(192, 57, 43, 0.07);
+  color: #c0392b;
+  transform: translateX(3px);
 }
 
-/* Rename Modal */
+.menu-item-danger:hover svg {
+  color: #c0392b;
+  transform: scale(1.1);
+}
+
+/* ══════════════════════════════════════
+   MODAL OVERLAY
+══════════════════════════════════════ */
 .modal-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(9, 30, 66, 0.45);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+  inset: 0;
+  background: rgba(26, 18, 8, 0.38);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 10000;
-  animation: fadeIn 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: overlayFadeIn 0.22s var(--ease) both;
 }
 
-@keyframes fadeIn {
+@keyframes overlayFadeIn {
   from { opacity: 0; }
-  to { opacity: 1; }
+  to   { opacity: 1; }
 }
 
+/* ══════════════════════════════════════
+   RENAME MODAL
+══════════════════════════════════════ */
 .rename-modal {
   width: 90%;
   max-width: 420px;
-  background: rgba(255, 255, 255, 0.98);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 2px solid rgba(223, 225, 230, 0.6);
-  border-radius: 16px;
-  padding: 24px;
-  box-shadow: 
-    0 20px 48px rgba(9, 30, 66, 0.2),
-    0 0 0 1px rgba(255, 255, 255, 0.9);
-  animation: modalSlideIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  background: var(--bg-card);
+  border: 1.5px solid var(--border-mid);
+  border-radius: var(--r-xl);
+  padding: 28px;
+  box-shadow:
+    0 20px 56px rgba(60, 45, 20, 0.18),
+    0 4px  16px rgba(60, 45, 20, 0.10);
+  animation: modalSlideIn 0.28s var(--ease-back) both;
+
+  /* Dot texture */
+  background-image: radial-gradient(circle, rgba(60,45,20,0.07) 1px, transparent 1px);
+  background-size: 28px 28px;
+  background-color: var(--bg-card);
 }
 
 @keyframes modalSlideIn {
-  from {
-    opacity: 0;
-    transform: scale(0.9) translateY(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1) translateY(0);
-  }
+  from { opacity: 0; transform: scale(0.92) translateY(-18px); }
+  to   { opacity: 1; transform: scale(1)    translateY(0); }
 }
 
 .rename-modal h3 {
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: 1.25rem;
+  font-family: 'Fraunces', serif;
+  font-size: 1.2rem;
   font-weight: 700;
-  color: var(--neutral-900);
+  color: var(--text-1);
   margin: 0 0 20px 0;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.04em;
+  line-height: 1.2;
 }
 
+/* Italic accent word — matches page title style */
+.rename-modal h3 em {
+  font-style: italic;
+  font-weight: 600;
+  background: linear-gradient(120deg, var(--terra) 0%, #b8892a 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── Input ── */
 .rename-input {
   width: 100%;
-  padding: 12px 14px;
-  background: rgba(255, 255, 255, 0.9);
-  border: 2px solid rgba(223, 225, 230, 0.6);
-  border-radius: 10px;
-  font-family: 'DM Sans', sans-serif;
+  padding: 11px 14px;
+  background: #fff;
+  border: 1.5px solid var(--border-mid);
+  border-radius: var(--r-md);
+  font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 0.9375rem;
   font-weight: 500;
-  color: var(--neutral-900);
+  color: var(--text-1);
   margin-bottom: 20px;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition:
+    border-color 0.18s var(--ease),
+    box-shadow   0.18s var(--ease);
 }
+
+.rename-input::placeholder { color: var(--text-3); }
 
 .rename-input:focus {
   outline: none;
-  border-color: var(--primary-blue);
-  box-shadow: 0 0 0 4px rgba(0, 82, 204, 0.1);
+  border-color: var(--terra);
+  box-shadow: 0 0 0 3px var(--terra-soft);
 }
 
-/* Modal Actions */
+/* ── Modal action buttons ── */
 .modal-actions {
   display: flex;
-  gap: 10px;
+  gap: 8px;
   justify-content: flex-end;
 }
 
+/* Save — terracotta primary */
 .btn-save {
-  padding: 10px 20px;
-  background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-blue-light) 100%);
+  padding: 10px 22px;
+  background: var(--terra);
   border: none;
-  border-radius: 10px;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 0.9375rem;
-  font-weight: 600;
-  color: white;
+  border-radius: var(--r-md);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #fff;
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 
-    0 4px 12px rgba(0, 82, 204, 0.25),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+  transition:
+    background 0.18s var(--ease),
+    transform  0.18s var(--ease),
+    box-shadow 0.18s var(--ease);
+  box-shadow: 0 2px 10px var(--terra-glow);
+}
+
+.btn-save::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.16), transparent 55%);
+  pointer-events: none;
 }
 
 .btn-save:hover {
-  transform: translateY(-2px);
-  box-shadow: 
-    0 6px 16px rgba(0, 82, 204, 0.3),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+  background: var(--terra-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 5px 18px var(--terra-glow);
 }
 
 .btn-save:active {
-  transform: translateY(0);
+  transform: translateY(0) scale(0.98);
+  box-shadow: none;
 }
 
+/* Cancel — ghost */
 .btn-cancel {
-  padding: 10px 20px;
+  padding: 10px 22px;
   background: transparent;
-  border: 2px solid rgba(223, 225, 230, 0.6);
-  border-radius: 10px;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 0.9375rem;
+  border: 1.5px solid var(--border-mid);
+  border-radius: var(--r-md);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.9rem;
   font-weight: 600;
-  color: var(--neutral-700);
+  color: var(--text-2);
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition:
+    background    0.18s var(--ease),
+    border-color  0.18s var(--ease),
+    color         0.18s var(--ease),
+    transform     0.18s var(--ease);
 }
 
 .btn-cancel:hover {
-  background: rgba(9, 30, 66, 0.04);
-  border-color: var(--neutral-400);
-  color: var(--neutral-900);
+  background: var(--bg-base);
+  border-color: var(--border-bright);
+  color: var(--text-1);
 }
 
-.btn-cancel:active {
-  transform: scale(0.98);
-}
+.btn-cancel:active { transform: scale(0.97); }
 
-/* Responsive */
+/* ══════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════ */
 @media (max-width: 480px) {
-  .rename-modal {
-    padding: 20px;
-  }
-
-  .rename-modal h3 {
-    font-size: 1.125rem;
-  }
-
-  .rename-input {
-    padding: 10px 12px;
-    font-size: 0.875rem;
-  }
-
+  .rename-modal   { padding: 22px; }
+  .rename-modal h3 { font-size: 1.05rem; }
+  .rename-input   { padding: 10px 12px; font-size: 0.875rem; }
   .btn-save,
-  .btn-cancel {
-    padding: 9px 16px;
-    font-size: 0.875rem;
-  }
+  .btn-cancel     { padding: 9px 16px; font-size: 0.875rem; }
 }
 
-/* Accessibility */
+/* ══════════════════════════════════════
+   ACCESSIBILITY
+══════════════════════════════════════ */
+.list-menu-btn:focus-visible,
+.menu-item:focus-visible,
+.rename-input:focus-visible,
+.btn-save:focus-visible,
+.btn-cancel:focus-visible {
+  outline: 2.5px solid var(--terra);
+  outline-offset: 2px;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .list-dropdown-menu,
   .modal-overlay,

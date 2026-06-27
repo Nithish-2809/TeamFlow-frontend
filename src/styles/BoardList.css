@@ -1,82 +1,163 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap');
+/* ═══════════════════════════════════════════════════════
+   BoardList.css  —  Ivory Workspace · List Column
+   Matches: Home · Navbar · BoardTopbar · BoardContent · ListMenu
+═══════════════════════════════════════════════════════ */
 
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700;1,9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --terra:         #c45c2e;
+  --terra-soft:    rgba(196, 92, 46, 0.10);
+  --terra-glow:    rgba(196, 92, 46, 0.18);
+  --bg-base:       #f5f0e8;
+  --bg-card:       #fdfbf7;
+  --border-subtle: rgba(60, 45, 20, 0.08);
+  --border-mid:    rgba(60, 45, 20, 0.15);
+  --border-bright: rgba(60, 45, 20, 0.26);
+  --text-1:        #1a1208;
+  --text-2:        #5c4f38;
+  --text-3:        #a0907a;
+  --ease:          cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-back:     cubic-bezier(0.34, 1.56, 0.64, 1);
+  --r-md:  10px;
+  --r-lg:  14px;
+  --r-xl:  18px;
+  --r-pill: 100px;
+}
+
+/* ══════════════════════════════════════
+   LIST COLUMN
+══════════════════════════════════════ */
 .board-list {
   width: 300px;
   min-width: 300px;
   max-width: 300px;
-  height: calc(100vh - 140px); /* fixed consistent height */
-  background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 2px solid rgba(223, 225, 230, 0.6);
-  border-radius: 12px;
-  box-shadow: 
-    0 4px 12px rgba(9, 30, 66, 0.08),
-    0 0 0 1px rgba(255, 255, 255, 0.9);
+  height: calc(100vh - 140px);
+  background: var(--bg-card);
+  border: 1.5px solid var(--border-subtle);
+  border-radius: var(--r-xl);
+  box-shadow:
+    0 1px 3px rgba(60, 45, 20, 0.06),
+    0 4px 16px rgba(60, 45, 20, 0.07);
   display: flex;
   flex-direction: column;
-  transition: border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1),
-              box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  /* No position, overflow, or height:fit-content */
+  transition:
+    border-color 0.22s var(--ease),
+    box-shadow   0.22s var(--ease),
+    transform    0.22s var(--ease);
+
+  /* Dot-grid texture — carried through from every surface */
+  background-image: radial-gradient(circle, rgba(60,45,20,0.07) 1px, transparent 1px);
+  background-size: 28px 28px;
+  background-color: var(--bg-card);
 }
 
 .board-list:hover {
-  border-color: rgba(0, 82, 204, 0.3);
-  box-shadow: 
-    0 6px 16px rgba(9, 30, 66, 0.12),
-    0 0 0 1px rgba(255, 255, 255, 0.9);
+  border-color: rgba(196, 92, 46, 0.25);
+  box-shadow:
+    0 2px 8px rgba(60, 45, 20, 0.08),
+    0 8px 28px rgba(60, 45, 20, 0.10),
+    0 0 0 3px rgba(196, 92, 46, 0.06);
 }
 
-/* List Header - fixed, never scrolls */
+/* ══════════════════════════════════════
+   LIST HEADER (fixed, never scrolls)
+══════════════════════════════════════ */
 .list-header {
-  padding: 16px;
-  border-bottom: 2px solid rgba(223, 225, 230, 0.4);
-  background: linear-gradient(180deg, rgba(250, 251, 252, 0.8) 0%, rgba(255, 255, 255, 0.4) 100%);
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border-subtle);
+  background: linear-gradient(
+    180deg,
+    rgba(245, 240, 232, 0.9) 0%,
+    rgba(253, 251, 247, 0.5) 100%
+  );
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 8px;
   cursor: grab;
-  border-radius: 10px 10px 0 0;
-  flex-shrink: 0; /* never shrink */
+  border-radius: calc(var(--r-xl) - 1px) calc(var(--r-xl) - 1px) 0 0;
+  flex-shrink: 0;
+  transition: background 0.18s var(--ease);
 }
 
-.list-header:active {
-  cursor: grabbing;
+.list-header:hover {
+  background: linear-gradient(
+    180deg,
+    rgba(245, 240, 232, 1) 0%,
+    rgba(245, 240, 232, 0.7) 100%
+  );
 }
 
+.list-header:active { cursor: grabbing; }
+
+/* Accent left-edge strip — colour varies per list via --accent */
+.list-header::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--accent, var(--terra));
+  border-radius: calc(var(--r-xl) - 1px) 0 0 0;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+.board-list:hover .list-header::before { opacity: 1; }
+
+/* Make header position: relative so ::before works */
+.list-header { position: relative; }
+
+/* ── List title ── */
 .list-title {
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: 1rem;
+  font-family: 'Fraunces', serif;
+  font-size: 0.975rem;
   font-weight: 700;
-  color: var(--neutral-900);
+  color: var(--text-1);
   margin: 0;
   flex: 1;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.03em;
+  line-height: 1.2;
+  padding-left: 8px; /* clear the accent strip */
 }
 
+/* ── Header actions (count + menu) ── */
 .list-actions {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   flex-shrink: 0;
 }
 
+/* Task count pill */
 .task-count {
-  padding: 4px 10px;
-  background: rgba(9, 30, 66, 0.08);
-  border-radius: 12px;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 0.75rem;
+  padding: 3px 9px;
+  background: var(--bg-base);
+  border: 1px solid var(--border-mid);
+  border-radius: var(--r-pill);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.72rem;
   font-weight: 700;
-  color: var(--neutral-700);
-  min-width: 28px;
+  color: var(--text-3);
+  min-width: 26px;
   text-align: center;
+  letter-spacing: 0.02em;
+  transition: background 0.15s, color 0.15s;
 }
 
-/* List Tasks - scrollable area */
+.board-list:hover .task-count {
+  background: var(--terra-soft);
+  color: var(--terra);
+  border-color: rgba(196, 92, 46, 0.2);
+}
+
+/* ══════════════════════════════════════
+   SCROLLABLE TASK AREA
+══════════════════════════════════════ */
 .list-tasks {
   flex: 1;
   overflow-y: auto;
@@ -84,49 +165,73 @@
   padding: 12px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 9px;
 }
 
-.list-tasks::-webkit-scrollbar {
-  width: 6px;
-}
+/* Warm scrollbar */
+.list-tasks::-webkit-scrollbar { width: 4px; }
 
 .list-tasks::-webkit-scrollbar-track {
   background: transparent;
-  margin: 4px 0;
+  margin: 6px 0;
 }
 
 .list-tasks::-webkit-scrollbar-thumb {
-  background: rgba(9, 30, 66, 0.15);
+  background: rgba(60, 45, 20, 0.14);
   border-radius: 4px;
 }
 
 .list-tasks::-webkit-scrollbar-thumb:hover {
-  background: rgba(9, 30, 66, 0.3);
+  background: rgba(196, 92, 46, 0.28);
 }
 
-/* Empty State */
+/* ══════════════════════════════════════
+   EMPTY STATE
+══════════════════════════════════════ */
 .empty-tasks {
   flex: 1;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 0.875rem;
-  color: var(--neutral-400);
-  font-style: italic;
+  gap: 6px;
   pointer-events: none;
-  padding: 20px 0;
+  padding: 24px 16px;
 }
 
-/* Add Task Button - fixed at bottom, never scrolls */
+.empty-tasks-icon {
+  font-size: 1.75rem;
+  opacity: 0.35;
+  user-select: none;
+}
+
+.empty-tasks-text {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-3);
+  font-style: italic;
+  text-align: center;
+}
+
+/* ══════════════════════════════════════
+   ADD TASK FOOTER (fixed, never scrolls)
+══════════════════════════════════════ */
 .create-task-btn-wrapper {
   flex-shrink: 0;
   padding: 10px 12px;
-  border-top: 2px solid rgba(223, 225, 230, 0.4);
+  border-top: 1px solid var(--border-subtle);
+  background: linear-gradient(
+    0deg,
+    rgba(245, 240, 232, 0.8) 0%,
+    rgba(253, 251, 247, 0.4) 100%
+  );
+  border-radius: 0 0 calc(var(--r-xl) - 1px) calc(var(--r-xl) - 1px);
 }
 
-/* Responsive */
+/* ══════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════ */
 @media (max-width: 768px) {
   .board-list {
     width: 280px;
@@ -134,14 +239,8 @@
     max-width: 280px;
     height: calc(100vh - 120px);
   }
-
-  .list-header {
-    padding: 14px;
-  }
-
-  .list-tasks {
-    padding: 10px;
-  }
+  .list-header { padding: 12px 14px; }
+  .list-tasks  { padding: 10px; }
 }
 
 @media (max-width: 480px) {
@@ -151,18 +250,15 @@
     max-width: 260px;
     height: calc(100vh - 100px);
   }
-
-  .list-header {
-    padding: 12px;
-  }
-
-  .list-title {
-    font-size: 0.9375rem;
-  }
+  .list-header { padding: 11px 12px; }
+  .list-title  { font-size: 0.9rem; }
 }
 
+/* ══════════════════════════════════════
+   ACCESSIBILITY
+══════════════════════════════════════ */
 @media (prefers-reduced-motion: reduce) {
-  .board-list {
-    transition: none !important;
-  }
+  .board-list,
+  .list-header,
+  .task-count { transition: none !important; }
 }
