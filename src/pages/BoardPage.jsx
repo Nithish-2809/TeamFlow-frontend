@@ -42,8 +42,47 @@ function BoardPage() {
       socket.once("connect", join)
     }
 
+    const {
+      applyListCreated,
+      applyListRenamed,
+      applyListDeleted,
+      applyListsReordered,
+      applyTaskCreated,
+      applyTaskUpdated,
+      applyTaskDeleted,
+      applyTasksReordered
+    } = useBoardPageStore.getState()
+
+    const onListCreated = ({ list }) => applyListCreated(list)
+    const onListRenamed = ({ listId, newName }) => applyListRenamed(listId, newName)
+    const onListDeleted = ({ listId }) => applyListDeleted(listId)
+    const onListsReordered = ({ orderedListIds }) => applyListsReordered(orderedListIds)
+
+    const onTaskCreated = ({ listId, task }) => applyTaskCreated(listId, task)
+    const onTaskUpdated = ({ listId, task }) => applyTaskUpdated(listId, task)
+    const onTaskDeleted = ({ listId, taskId }) => applyTaskDeleted(listId, taskId)
+    const onTasksReordered = ({ listId, orderedTaskIds }) => applyTasksReordered(listId, orderedTaskIds)
+
+    socket.on("list:created", onListCreated)
+    socket.on("list:renamed", onListRenamed)
+    socket.on("list:deleted", onListDeleted)
+    socket.on("list:reordered", onListsReordered)
+
+    socket.on("task:created", onTaskCreated)
+    socket.on("task:updated", onTaskUpdated)
+    socket.on("task:deleted", onTaskDeleted)
+    socket.on("task:reordered", onTasksReordered)
+
     return () => {
       socket.off("connect", join)
+      socket.off("list:created", onListCreated)
+      socket.off("list:renamed", onListRenamed)
+      socket.off("list:deleted", onListDeleted)
+      socket.off("list:reordered", onListsReordered)
+      socket.off("task:created", onTaskCreated)
+      socket.off("task:updated", onTaskUpdated)
+      socket.off("task:deleted", onTaskDeleted)
+      socket.off("task:reordered", onTasksReordered)
       socket.emit("leaveBoard", boardId)
     }
   }, [boardId, user?._id])

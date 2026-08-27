@@ -277,6 +277,107 @@ export const useBoardPageStore = create((set, get) => ({
   },
 
   // =========================
+  // SOCKET-DRIVEN STATE UPDATES (no API calls — applies data
+  // already broadcast by the server for list:* events)
+  // =========================
+
+  applyListCreated: (list) => {
+    set((state) => {
+      if (state.lists.some((l) => l._id === list._id)) return state;
+      return {
+        lists: [...state.lists, list],
+        tasksByList: {
+          ...state.tasksByList,
+          [list._id]: state.tasksByList[list._id] || [],
+        },
+      };
+    });
+  },
+
+  applyListRenamed: (listId, newName) => {
+    set((state) => ({
+      lists: state.lists.map((list) =>
+        list._id === listId ? { ...list, name: newName } : list,
+      ),
+    }));
+  },
+
+  applyListDeleted: (listId) => {
+    set((state) => {
+      const newTasksByList = { ...state.tasksByList };
+      delete newTasksByList[listId];
+
+      return {
+        lists: state.lists.filter((list) => list._id !== listId),
+        tasksByList: newTasksByList,
+      };
+    });
+  },
+
+  applyListsReordered: (orderedListIds) => {
+    set((state) => {
+      const listsMap = new Map(state.lists.map((list) => [list._id, list]));
+      const reorderedLists = orderedListIds
+        .map((id) => listsMap.get(id))
+        .filter(Boolean);
+
+      return { lists: reorderedLists };
+    });
+  },
+
+  applyTaskCreated: (listId, task) => {
+    set((state) => {
+      const existing = state.tasksByList[listId] || [];
+      if (existing.some((t) => t._id === task._id)) return state;
+      return {
+        tasksByList: {
+          ...state.tasksByList,
+          [listId]: [...existing, task],
+        },
+      };
+    });
+  },
+
+  applyTaskUpdated: (listId, task) => {
+    set((state) => ({
+      tasksByList: {
+        ...state.tasksByList,
+        [listId]: (state.tasksByList[listId] || []).map((t) =>
+          t._id === task._id ? { ...t, ...task } : t,
+        ),
+      },
+    }));
+  },
+
+  applyTaskDeleted: (listId, taskId) => {
+    set((state) => ({
+      tasksByList: {
+        ...state.tasksByList,
+        [listId]: (state.tasksByList[listId] || []).filter(
+          (t) => t._id !== taskId,
+        ),
+      },
+    }));
+  },
+
+  applyTasksReordered: (listId, orderedTaskIds) => {
+    set((state) => {
+      const tasksMap = new Map(
+        (state.tasksByList[listId] || []).map((t) => [t._id, t]),
+      );
+      const reordered = orderedTaskIds
+        .map((id) => tasksMap.get(id))
+        .filter(Boolean);
+      return {
+        tasksByList: {
+          ...state.tasksByList,
+          [listId]: reordered,
+        },
+      };
+    });
+  },
+
+  // =========================
   // TASKS ACTIONS
   // =========================
 
