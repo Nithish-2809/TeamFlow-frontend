@@ -50,7 +50,13 @@ function BoardPage() {
       applyTaskCreated,
       applyTaskUpdated,
       applyTaskDeleted,
-      applyTasksReordered
+      applyTasksReordered,
+      applyMemberJoined,
+      applyMemberRejected,
+      applyMemberRemoved,
+      applyMemberLeft,
+      applyAdminChanged,
+      applyJoinRequestReceived
     } = useBoardPageStore.getState()
 
     const onListCreated = ({ list }) => applyListCreated(list)
@@ -63,6 +69,20 @@ function BoardPage() {
     const onTaskDeleted = ({ listId, taskId }) => applyTaskDeleted(listId, taskId)
     const onTasksReordered = ({ listId, orderedTaskIds }) => applyTasksReordered(listId, orderedTaskIds)
 
+    const onMemberJoined = ({ boardId: joinedBoardId }) => applyMemberJoined(joinedBoardId)
+    const onMemberRejected = ({ userId }) => applyMemberRejected(userId)
+    const onMemberRemoved = ({ userId }) => {
+      applyMemberRemoved(userId)
+      if (userId === user._id) {
+        window.location.href = "/"
+      }
+    }
+    const onMemberLeft = ({ userId }) => applyMemberLeft(userId)
+    const onAdminChanged = ({ newAdminId }) => applyAdminChanged(newAdminId, user._id)
+    const onJoinRequest = ({ boardId: reqBoardId }) => {
+      if (reqBoardId === boardId) applyJoinRequestReceived(boardId)
+    }
+
     socket.on("list:created", onListCreated)
     socket.on("list:renamed", onListRenamed)
     socket.on("list:deleted", onListDeleted)
@@ -72,6 +92,13 @@ function BoardPage() {
     socket.on("task:updated", onTaskUpdated)
     socket.on("task:deleted", onTaskDeleted)
     socket.on("task:reordered", onTasksReordered)
+
+    socket.on("member:joined", onMemberJoined)
+    socket.on("member:rejected", onMemberRejected)
+    socket.on("member:removed", onMemberRemoved)
+    socket.on("member:left", onMemberLeft)
+    socket.on("admin:changed", onAdminChanged)
+    socket.on("member:join-request", onJoinRequest)
 
     return () => {
       socket.off("connect", join)
@@ -83,6 +110,12 @@ function BoardPage() {
       socket.off("task:updated", onTaskUpdated)
       socket.off("task:deleted", onTaskDeleted)
       socket.off("task:reordered", onTasksReordered)
+      socket.off("member:joined", onMemberJoined)
+      socket.off("member:rejected", onMemberRejected)
+      socket.off("member:removed", onMemberRemoved)
+      socket.off("member:left", onMemberLeft)
+      socket.off("admin:changed", onAdminChanged)
+      socket.off("member:join-request", onJoinRequest)
       socket.emit("leaveBoard", boardId)
     }
   }, [boardId, user?._id])

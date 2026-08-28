@@ -47,29 +47,8 @@ function Navbar() {
 
         {/* Desktop Navigation */}
         <div className="navbar-right navbar-desktop">
-          <button 
-            className={`navbar-button ${isActive('/chats') ? 'navbar-button-active' : ''}`}
-            onClick={() => handleNavigation("/chats")}
-          >
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-              <path d="M17 9C17 13.4183 13.4183 17 9 17C7.73333 17 6.55556 16.6889 5.52778 16.1444L2 17L2.85556 13.4722C2.31111 12.4444 2 11.2667 2 10C2 5.58172 5.58172 2 10 2C14.4183 2 18 5.58172 18 10V10.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-            <span>Chats</span>
-          </button>
 
-          {/* Pending Requests only for admin */}
-          {user?.isAdminGlobal && (
-            <button 
-              className={`navbar-button navbar-button-admin ${isActive('/pending-requests') ? 'navbar-button-active' : ''}`}
-              onClick={() => handleNavigation("/pending-requests")}
-            >
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                <circle cx="10" cy="10" r="8" stroke="currentColor" strokeWidth="1.5"/>
-                <path d="M10 6V10L13 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-              <span>Pending Requests</span>
-            </button>
-          )}
+          
 
           <button 
             className={`navbar-button ${isActive('/profile') ? 'navbar-button-active' : ''}`}
@@ -132,15 +111,7 @@ function Navbar() {
         </div>
 
         <div className="navbar-mobile-menu">
-          <button 
-            className={`navbar-mobile-button ${isActive('/chats') ? 'active' : ''}`}
-            onClick={() => handleNavigation("/chats")}
-          >
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-              <path d="M17 9C17 13.4183 13.4183 17 9 17C7.73333 17 6.55556 16.6889 5.52778 16.1444L2 17L2.85556 13.4722C2.31111 12.4444 2 11.2667 2 10C2 5.58172 5.58172 2 10 2C14.4183 2 18 5.58172 18 10V10.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-            <span>Chats</span>
-          </button>
+          
 
           {user?.isAdminGlobal && (
             <button 

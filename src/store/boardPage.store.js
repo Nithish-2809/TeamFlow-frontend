@@ -191,14 +191,18 @@ export const useBoardPageStore = create((set, get) => ({
     try {
       const response = await createList(token, boardId, name);
 
-      // Add the new list to state
-      set((state) => ({
-        lists: [...state.lists, response.list],
-        tasksByList: {
-          ...state.tasksByList,
-          [response.list._id]: [],
-        },
-      }));
+      // Add the new list to state (guarded: the socket broadcast for this
+      // same create may have already landed via applyListCreated)
+      set((state) => {
+        if (state.lists.some((l) => l._id === response.list._id)) return state;
+        return {
+          lists: [...state.lists, response.list],
+          tasksByList: {
+            ...state.tasksByList,
+            [response.list._id]: state.tasksByList[response.list._id] || [],
+          },
+        };
+      });
 
       return response;
     } catch (error) {
@@ -378,6 +382,66 @@ export const useBoardPageStore = create((set, get) => ({
   },
 
   // =========================
+  // SOCKET-DRIVEN MEMBER/ADMIN UPDATES
+  // =========================
+
+  refreshPendingMembers: async (boardId) => {
+    const token = useAuthStore.getState().token;
+    try {
+      const res = await boardPageApi.getPendingMembers(token, boardId);
+      set({ pendingMembers: res.pendingMembers || [] });
+    } catch (error) {
+      console.error("Error refreshing pending members:", error);
+    }
+  },
+
+  applyMemberJoined: async (boardId) => {
+    // payload from member:joined lacks profilePic/email, so refetch full data
+    const token = useAuthStore.getState().token;
+    try {
+      const res = await boardPageApi.getBoardMembers(token, boardId);
+      set({ members: res.members || [] });
+    } catch (error) {
+      console.error("Error refreshing members:", error);
+    }
+  },
+
+  applyMemberRejected: (userId) => {
+    set((state) => ({
+      pendingMembers: state.pendingMembers.filter((m) => m.userId !== userId),
+    }));
+  },
+
+  applyMemberRemoved: (userId) => {
+    set((state) => ({
+      members: state.members.filter((m) => m.userId !== userId),
+    }));
+  },
+
+  applyMemberLeft: (userId) => {
+    set((state) => ({
+      members: state.members.filter((m) => m.userId !== userId),
+    }));
+  },
+
+  applyAdminChanged: (newAdminId, currentUserId) => {
+    set((state) => ({
+      members: state.members.map((m) => ({
+        ...m,
+        isAdmin: m.userId === newAdminId,
+      })),
+      boardDetails: state.boardDetails
+        ? { ...state.boardDetails, isAdmin: currentUserId === newAdminId }
+        : state.boardDetails,
+    }));
+  },
+
+  applyJoinRequestReceived: (boardId) => {
+    // payload from member:join-request lacks userName/email, so refetch
+    get().refreshPendingMembers(boardId);
+  },
+
+  // =========================
   // TASKS ACTIONS
   // =========================
 
@@ -387,13 +451,18 @@ export const useBoardPageStore = create((set, get) => ({
     try {
       const response = await createTask(token, boardId, listId, taskData);
 
-      // Add the new task to state
-      set((state) => ({
-        tasksByList: {
-          ...state.tasksByList,
-          [listId]: [...(state.tasksByList[listId] || []), response.task],
-        },
-      }));
+      // Add the new task to state (guarded: the socket broadcast for this
+      // same create may have already landed via applyTaskCreated)
+      set((state) => {
+        const existing = state.tasksByList[listId] || [];
+        if (existing.some((t) => t._id === response.task._id)) return state;
+        return {
+          tasksByList: {
+            ...state.tasksByList,
+            [listId]: [...existing, response.task],
+          },
+        };
+      });
 
       return response;
     } catch (error) {
