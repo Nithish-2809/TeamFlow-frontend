@@ -53,4 +53,14 @@ const reorderTasks = async (token, boardId, listId, orderedTaskIds) => {
   return res.data
 }
 
-export { getListTasks, createTask, updateTask, deleteTask, reorderTasks }
+
+const assignTask = async (token, boardId, listId, taskId, assigneeId) => {
+  const res = await taskApi.patch(
+    `/boards/${boardId}/lists/${listId}/tasks/${taskId}/assign`,
+    { assigneeId },
+    { headers: { Authorization: `Bearer ${token}` } }
+  )
+  return res.data
+}
+
+export { getListTasks, createTask, updateTask, deleteTask, reorderTasks, assignTask }

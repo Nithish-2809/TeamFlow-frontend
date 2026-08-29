@@ -58,10 +58,17 @@ function BoardContent({ boardId, isAdmin }) {
     }
 
     if (activeType === 'list') {
+      // over.id can resolve to a TASK inside another list (nested SortableContext),
+      // not the list itself — resolve it back to its parent list in that case.
+      let overListId = over.id
+      if (over.data.current?.type === 'task') {
+        overListId = over.data.current?.listId
+      }
+
       const oldIndex = lists.findIndex((list) => list._id === active.id)
-      const newIndex = lists.findIndex((list) => list._id === over.id)
-      
-      if (oldIndex !== newIndex) {
+      const newIndex = lists.findIndex((list) => list._id === overListId)
+
+      if (oldIndex !== -1 && newIndex !== -1 && oldIndex !== newIndex) {
         const newLists = arrayMove(lists, oldIndex, newIndex)
         const orderedListIds = newLists.map(list => list._id)
         
