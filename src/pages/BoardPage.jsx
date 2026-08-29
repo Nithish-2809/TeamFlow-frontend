@@ -51,6 +51,8 @@ function BoardPage() {
       applyTaskUpdated,
       applyTaskDeleted,
       applyTasksReordered,
+      applyTaskAssigned,
+      applyTasksUnassignedBulk,
       applyMemberJoined,
       applyMemberRejected,
       applyMemberRemoved,
@@ -68,6 +70,8 @@ function BoardPage() {
     const onTaskUpdated = ({ listId, task }) => applyTaskUpdated(listId, task)
     const onTaskDeleted = ({ listId, taskId }) => applyTaskDeleted(listId, taskId)
     const onTasksReordered = ({ listId, orderedTaskIds }) => applyTasksReordered(listId, orderedTaskIds)
+    const onTaskAssigned = ({ listId, taskId, assignedTo }) => applyTaskAssigned(listId, taskId, assignedTo)
+    const onTasksUnassignedBulk = ({ userId }) => applyTasksUnassignedBulk(userId)
 
     const onMemberJoined = ({ boardId: joinedBoardId }) => applyMemberJoined(joinedBoardId)
     const onMemberRejected = ({ userId }) => applyMemberRejected(userId)
@@ -92,6 +96,8 @@ function BoardPage() {
     socket.on("task:updated", onTaskUpdated)
     socket.on("task:deleted", onTaskDeleted)
     socket.on("task:reordered", onTasksReordered)
+    socket.on("task:assigned", onTaskAssigned)
+    socket.on("tasks:unassigned-bulk", onTasksUnassignedBulk)
 
     socket.on("member:joined", onMemberJoined)
     socket.on("member:rejected", onMemberRejected)
@@ -110,6 +116,8 @@ function BoardPage() {
       socket.off("task:updated", onTaskUpdated)
       socket.off("task:deleted", onTaskDeleted)
       socket.off("task:reordered", onTasksReordered)
+      socket.off("task:assigned", onTaskAssigned)
+      socket.off("tasks:unassigned-bulk", onTasksUnassignedBulk)
       socket.off("member:joined", onMemberJoined)
       socket.off("member:rejected", onMemberRejected)
       socket.off("member:removed", onMemberRemoved)
