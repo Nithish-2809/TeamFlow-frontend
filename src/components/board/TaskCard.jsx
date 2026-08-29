@@ -78,6 +78,24 @@ function TaskCard({ task, boardId, listId, isDragging = false }) {
           <span className={`task-status ${getStatusColor(task.status)}`}>
             {getStatusLabel(task.status)}
           </span>
+          {task.assignedTo ? (
+            <span className="task-assignee" title={task.assignedTo.userName}>
+              {task.assignedTo.profilePic ? (
+                <img
+                  src={task.assignedTo.profilePic}
+                  alt={task.assignedTo.userName}
+                  className="task-assignee-avatar"
+                />
+              ) : (
+                <span className="task-assignee-avatar task-assignee-avatar--letter">
+                  {task.assignedTo.userName?.charAt(0).toUpperCase() || "U"}
+                </span>
+              )}
+              <span className="task-assignee-name">{task.assignedTo.userName}</span>
+            </span>
+          ) : (
+            <span className="task-assignee task-assignee--empty">Not yet assigned</span>
+          )}
         </div>
       </div>
 
