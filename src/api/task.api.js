@@ -63,4 +63,12 @@ const assignTask = async (token, boardId, listId, taskId, assigneeId) => {
   return res.data
 }
 
-export { getListTasks, createTask, updateTask, deleteTask, reorderTasks, assignTask }
+const getMyTasks = async (token) => {
+  const res = await taskApi.get(
+    `/my-tasks`,
+    { headers: { Authorization: `Bearer ${token}` } }
+  )
+  return res.data
+}
+
+export { getListTasks, createTask, updateTask, deleteTask, reorderTasks, assignTask,getMyTasks }

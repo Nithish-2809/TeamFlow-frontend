@@ -2,30 +2,27 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap');
 
 .task-card {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
-  border: 2px solid rgba(223, 225, 230, 0.6);
-  border-radius: 10px;
-  padding: 12px 14px;
+  background: #ffffff;
+  border: 1px solid rgba(223, 225, 230, 0.9);
+  border-radius: 12px;
+  padding: 14px 16px;
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 2px 4px rgba(9, 30, 66, 0.04);
+  box-shadow: 0 1px 2px rgba(9, 30, 66, 0.06);
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
 }
 
 .task-card:hover {
-  border-color: rgba(0, 82, 204, 0.4);
-  box-shadow: 
-    0 4px 12px rgba(9, 30, 66, 0.1),
-    0 0 0 2px rgba(0, 82, 204, 0.1);
-  transform: translateY(-2px);
+  border-color: rgba(0, 82, 204, 0.35);
+  box-shadow: 0 8px 20px rgba(9, 30, 66, 0.08);
+  transform: translateY(-1px);
 }
 
 .task-card:active {
   transform: translateY(0);
-  box-shadow: 0 2px 4px rgba(9, 30, 66, 0.04);
+  box-shadow: 0 1px 2px rgba(9, 30, 66, 0.06);
 }
 
 /* Task Title */
@@ -44,7 +41,7 @@
 .task-description {
   font-family: 'DM Sans', sans-serif;
   font-size: 0.8125rem;
-  color: var(--neutral-600);
+  color: var(--neutral-500);
   margin: 0;
   line-height: 1.5;
   display: -webkit-box;
@@ -59,22 +56,25 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
-  margin-top: 4px;
+  gap: 10px;
+  margin-top: 2px;
 }
 
-/* Task Status */
+/* Status pill — soft tint + colored text + dot, not solid neon fills */
 .task-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   padding: 4px 10px;
   border-radius: 6px;
   font-family: 'DM Sans', sans-serif;
   font-size: 0.6875rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  flex-shrink: 0;
+  line-height: 1.3;
 }
 
 .task-status::before {
@@ -82,43 +82,85 @@
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  display: block;
+  flex-shrink: 0;
 }
 
 .status-pending {
-  background: red;
+  background: rgba(229, 121, 126, 0.863);
+  color: var(--neutral-600);
 }
 
 .status-pending::before {
-  background: red;
+  background: var(--neutral-500);
 }
 
 .status-in-progress {
-  background: yellow;
+  background: rgba(0, 82, 204, 0.1);
+  color: var(--primary-blue);
 }
 
 .status-in-progress::before {
-  background: yellow;
-}
-
-@keyframes pulse-status {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
+  background: var(--primary-blue);
 }
 
 .status-completed {
-  color: white;
-  background: rgb(106, 242, 15);
+  background: rgba(0, 135, 90, 0.1);
+  color: var(--success);
 }
 
 .status-completed::before {
   background: var(--success);
 }
 
+/* Assignee chip */
+.task-assignee {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--neutral-600);
+}
+
+.task-assignee--empty {
+  font-style: italic;
+  font-weight: 500;
+  color: var(--neutral-400);
+}
+
+.task-assignee-avatar {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  box-shadow: 0 0 0 1.5px #ffffff, 0 0 0 2.5px rgba(9, 30, 66, 0.08);
+}
+
+.task-assignee-avatar--letter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-blue-light) 100%);
+  color: white;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.625rem;
+  font-weight: 700;
+}
+
+.task-assignee-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 90px;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .task-card {
-    padding: 10px 12px;
+    padding: 12px 14px;
   }
 
   .task-title {
@@ -128,16 +170,24 @@
   .task-description {
     font-size: 0.75rem;
   }
+
+  .task-assignee-name {
+    max-width: 70px;
+  }
 }
 
 @media (max-width: 480px) {
   .task-card {
-    padding: 10px;
+    padding: 10px 12px;
   }
 
   .task-status {
     font-size: 0.625rem;
     padding: 3px 8px;
+  }
+
+  .task-assignee-name {
+    max-width: 55px;
   }
 }
 
@@ -146,52 +196,4 @@
   .task-card {
     transition: none !important;
   }
-
-  .status-in-progress::before {
-    animation: none !important;
-  }
-}
-
-.task-footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-}
-
-.task-assignee {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 12px;
-  color: #6b7280;
-}
-
-.task-assignee--empty {
-  font-style: italic;
-  color: #9ca3af;
-}
-
-.task-assignee-avatar {
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
-.task-assignee-avatar--letter {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #e5e7eb;
-  color: #374151;
-  font-size: 10px;
-  font-weight: 600;
-}
-
-.task-assignee-name {
-  max-width: 80px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }

@@ -62,6 +62,7 @@ function BoardList({ list, tasks, boardId, isAdmin }) {
               task={task}
               boardId={boardId}
               listId={list._id}
+              isAdmin={isAdmin}
             />
           ))}
         </SortableContext>

@@ -4,16 +4,17 @@ import ConfirmationModal from "../modals/ConfirmationModal"
 import Toast from "../modals/Toast"
 import "../../styles/TaskModal.css"
 
-function TaskModal({ task, boardId, listId, onClose }) {
+function TaskModal({ task, boardId, listId, isAdmin, onClose }) {
   const [isEditing, setIsEditing] = useState(false)
   const [isClosing, setIsClosing] = useState(false)
   const [title, setTitle] = useState(task.title)
   const [description, setDescription] = useState(task.description || "")
   const [status, setStatus] = useState(task.status)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+  const [isAssigning, setIsAssigning] = useState(false)
   const [toast, setToast] = useState(null)
 
-  const { updateTask, deleteTask } = useBoardPageStore()
+  const { updateTask, deleteTask, assignTask, members } = useBoardPageStore()
 
   const handleClose = () => {
     setIsClosing(true)
@@ -68,6 +69,25 @@ function TaskModal({ task, boardId, listId, onClose }) {
         message: error.response?.data?.msg || "Failed to delete task",
         type: "error"
       })
+    }
+  }
+
+  const handleAssignChange = async (e) => {
+    const assigneeId = e.target.value || null
+    setIsAssigning(true)
+    try {
+      await assignTask(boardId, listId, task._id, assigneeId)
+      setToast({
+        message: assigneeId ? "Task assigned" : "Task unassigned",
+        type: "success"
+      })
+    } catch (error) {
+      setToast({
+        message: error.response?.data?.msg || "Failed to assign task",
+        type: "error"
+      })
+    } finally {
+      setIsAssigning(false)
     }
   }
 
@@ -128,6 +148,29 @@ function TaskModal({ task, boardId, listId, onClose }) {
                 <option value="IN_PROGRESS">In Progress</option>
                 <option value="COMPLETED">Completed</option>
               </select>
+            </div>
+
+            <div className="task-modal-section">
+              <label>Assigned To</label>
+              {isAdmin ? (
+                <select
+                  value={task.assignedTo?._id || ""}
+                  onChange={handleAssignChange}
+                  disabled={isAssigning}
+                  className="assignee-select"
+                >
+                  <option value="">Not yet assigned</option>
+                  {members.map((m) => (
+                    <option key={m.userId} value={m.userId}>
+                      {m.userName}{m.isAdmin ? " (Leader)" : ""}
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                <p className="task-assignee-text">
+                  {task.assignedTo ? task.assignedTo.userName : "Not yet assigned"}
+                </p>
+              )}
             </div>
 
             <div className="task-modal-section">

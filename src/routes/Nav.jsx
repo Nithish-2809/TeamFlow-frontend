@@ -1,39 +1,40 @@
-import { useEffect } from "react"
-import { Routes, Route, useLocation } from "react-router-dom"
-import { hydrateAuth } from "../hooks/auth.hydrate"
-import { useAuthStore } from "../store/auth.store"
-import ProtectedRoute from "./ProtectedRoute"
-import ForgotPassword from "../pages/ForgotPassword"
-import ResetPassword from "../pages/ResetPassword"
-import Signup from "../pages/Signup"
-import Login from "../pages/Login"
-import Navbar from "../components/layout/Navbar"
-import Home from "../pages/Home"
-import Profile from "../pages/Profile"
-import CreateBoard from "../components/board/CreateBoard"
-import BoardPage from "../pages/BoardPage"
-import InviteJoinPage from "../components/board/InviteJoinPage"
+import { useEffect } from "react";
+import { Routes, Route, useLocation } from "react-router-dom";
+import { hydrateAuth } from "../hooks/auth.hydrate";
+import { useAuthStore } from "../store/auth.store";
+import ProtectedRoute from "./ProtectedRoute";
+import ForgotPassword from "../pages/ForgotPassword";
+import ResetPassword from "../pages/ResetPassword";
+import Signup from "../pages/Signup";
+import Login from "../pages/Login";
+import Navbar from "../components/layout/Navbar";
+import Home from "../pages/Home";
+import Profile from "../pages/Profile";
+import CreateBoard from "../components/board/CreateBoard";
+import BoardPage from "../pages/BoardPage";
+import InviteJoinPage from "../components/board/InviteJoinPage";
+import MyTasksPage from "../pages/MyTasksPage";
 
 const Nav = () => {
-  const location = useLocation()
-  const isAuthReady = useAuthStore((state) => state.isAuthReady)
-  const user = useAuthStore((state) => state.user)
+  const location = useLocation();
+  const isAuthReady = useAuthStore((state) => state.isAuthReady);
+  const user = useAuthStore((state) => state.user);
 
   // Hide navbar on board pages
-  const isBoardPage = location.pathname.startsWith('/board/')
+  const isBoardPage = location.pathname.startsWith("/board/");
 
   useEffect(() => {
-    hydrateAuth()
-  }, [])
+    hydrateAuth();
+  }, []);
 
   if (!isAuthReady) {
-    return <div>Loading authentication...</div>
+    return <div>Loading authentication...</div>;
   }
 
   return (
     <>
       {/* Only show Navbar if user is logged in AND not on a board page */}
-      {user && !isBoardPage && <Navbar />} 
+      {user && !isBoardPage && <Navbar />}
 
       <Routes>
         {/* Public Routes */}
@@ -48,6 +49,14 @@ const Nav = () => {
           element={
             <ProtectedRoute>
               <Home />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/my-tasks"
+          element={
+            <ProtectedRoute>
+              <MyTasksPage />
             </ProtectedRoute>
           }
         />
@@ -75,15 +84,17 @@ const Nav = () => {
             </ProtectedRoute>
           }
         />
-        <Route path="/invite/:token"
-         element={
-          <ProtectedRoute>
-            <InviteJoinPage />
-          </ProtectedRoute>
-          } />
+        <Route
+          path="/invite/:token"
+          element={
+            <ProtectedRoute>
+              <InviteJoinPage />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </>
-  )
-}
+  );
+};
 
-export default Nav
+export default Nav;

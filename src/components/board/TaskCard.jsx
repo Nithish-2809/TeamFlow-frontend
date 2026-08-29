@@ -5,7 +5,7 @@ import { CSS } from "@dnd-kit/utilities"
 import TaskModal from "./TaskModal"
 import "../../styles/TaskCard.css"
 
-function TaskCard({ task, boardId, listId, isDragging = false }) {
+function TaskCard({ task, boardId, listId, isAdmin, isDragging = false }) {
   const [showModal, setShowModal] = useState(false)
 
   const {
@@ -104,6 +104,7 @@ function TaskCard({ task, boardId, listId, isDragging = false }) {
           task={task}
           boardId={boardId}
           listId={listId}
+          isAdmin={isAdmin}
           onClose={() => setShowModal(false)}
         />,
         document.body
