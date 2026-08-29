@@ -13,6 +13,7 @@ import {
   updateTask,
   deleteTask,
   reorderTasks,
+  assignTask,
 } from "../api/task.api";
 import { useAuthStore } from "../store/auth.store";
 
@@ -568,6 +569,51 @@ export const useBoardPageStore = create((set, get) => ({
         [listId]: res.tasks || [],
       },
     }));
+  },
+
+  assignTask: async (boardId, listId, taskId, assigneeId) => {
+    const token = useAuthStore.getState().token;
+
+    try {
+      const response = await assignTask(token, boardId, listId, taskId, assigneeId);
+
+      set((state) => ({
+        tasksByList: {
+          ...state.tasksByList,
+          [listId]: (state.tasksByList[listId] || []).map((t) =>
+            t._id === taskId ? { ...t, assignedTo: response.task.assignedTo } : t,
+          ),
+        },
+      }));
+
+      return response;
+    } catch (error) {
+      console.error("Error assigning task:", error);
+      throw error;
+    }
+  },
+
+  applyTaskAssigned: (listId, taskId, assignedTo) => {
+    set((state) => ({
+      tasksByList: {
+        ...state.tasksByList,
+        [listId]: (state.tasksByList[listId] || []).map((t) =>
+          t._id === taskId ? { ...t, assignedTo } : t,
+        ),
+      },
+    }));
+  },
+
+  applyTasksUnassignedBulk: (userId) => {
+    set((state) => {
+      const newTasksByList = { ...state.tasksByList };
+      for (const listId of Object.keys(newTasksByList)) {
+        newTasksByList[listId] = newTasksByList[listId].map((t) =>
+          t.assignedTo?._id === userId ? { ...t, assignedTo: null } : t,
+        );
+      }
+      return { tasksByList: newTasksByList };
+    });
   },
 
   // =========================
