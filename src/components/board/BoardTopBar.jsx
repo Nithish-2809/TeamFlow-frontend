@@ -2,7 +2,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useBoardPageStore } from "../../store/boardPage.store";
-import ConfirmationModal from "../modals/Confirmationmodal";
+import ConfirmationModal from "../modals/ConfirmationModal";
 import InviteModal from "../modals/InviteModal";
 import RenameBoardModal from "./RenameBoardModal";
 import Toast from "../modals/Toast";
