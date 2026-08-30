@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const inviteApi = axios.create({
-  baseURL: "http://localhost:2231/api/boards",
+  baseURL: `${import.meta.env.VITE_API_URL}/api/boards`,
   withCredentials: true
 });
 

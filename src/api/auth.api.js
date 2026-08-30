@@ -1,8 +1,8 @@
 import axios from "axios";
 
 const authApi = axios.create({
-    baseURL : "http://localhost:2231/api/users",
-    withCredentials : true
+    baseURL: `${import.meta.env.VITE_API_URL}/api/users`,
+    withCredentials: true
 })
 
 const signupUser = async (signupDetails)=> {

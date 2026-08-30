@@ -4,7 +4,7 @@ let socket = null
 
 export const getSocket = () => {
   if (!socket) {
-    socket = io("http://localhost:2231", {
+    socket = io(`${import.meta.env.VITE_API_URL}`, {
       withCredentials: true,
       autoConnect: false,
     })
