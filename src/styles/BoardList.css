@@ -1,27 +1,22 @@
 /* ═══════════════════════════════════════════════════════
-   BoardList.css  —  Ivory Workspace · List Column
-   Matches: Home · Navbar · BoardTopbar · BoardContent · ListMenu
+   BoardList.css  —  Jira Blue System
+   Matches: BoardTopBar · BoardContent · ListMenu
 ═══════════════════════════════════════════════════════ */
 
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700;1,9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap');
 
 :root {
-  --terra:         #c45c2e;
-  --terra-soft:    rgba(196, 92, 46, 0.10);
-  --terra-glow:    rgba(196, 92, 46, 0.18);
-  --bg-base:       #f5f0e8;
-  --bg-card:       #fdfbf7;
-  --border-subtle: rgba(60, 45, 20, 0.08);
-  --border-mid:    rgba(60, 45, 20, 0.15);
-  --border-bright: rgba(60, 45, 20, 0.26);
-  --text-1:        #1a1208;
-  --text-2:        #5c4f38;
-  --text-3:        #a0907a;
-  --ease:          cubic-bezier(0.22, 1, 0.36, 1);
-  --ease-back:     cubic-bezier(0.34, 1.56, 0.64, 1);
-  --r-md:  10px;
-  --r-lg:  14px;
-  --r-xl:  18px;
+  --primary-blue: #0052CC;
+  --primary-blue-light: #2684FF;
+  --neutral-900: #091E42;
+  --neutral-600: #344563;
+  --neutral-400: #7A869A;
+  --neutral-100: #DFE1E6;
+  --neutral-50: #EBECF0;
+  --neutral-10: #FAFBFC;
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --r-md: 10px;
+  --r-lg: 14px;
   --r-pill: 100px;
 }
 
@@ -29,66 +24,43 @@
    LIST COLUMN
 ══════════════════════════════════════ */
 .board-list {
-  width: 300px;
-  min-width: 300px;
-  max-width: 300px;
-  height: calc(100vh - 140px);
-  background: var(--bg-card);
-  border: 1.5px solid var(--border-subtle);
-  border-radius: var(--r-xl);
-  box-shadow:
-    0 1px 3px rgba(60, 45, 20, 0.06),
-    0 4px 16px rgba(60, 45, 20, 0.07);
+  width: 292px;
+  min-width: 292px;
+  max-width: 292px;
+  height: calc(100vh - 136px);
+  background: #ffffff;
+  border: 1px solid var(--neutral-100);
+  border-radius: var(--r-lg);
+  box-shadow: 0 1px 2px rgba(9, 30, 66, 0.05), 0 4px 12px rgba(9, 30, 66, 0.05);
   display: flex;
   flex-direction: column;
-  transition:
-    border-color 0.22s var(--ease),
-    box-shadow   0.22s var(--ease),
-    transform    0.22s var(--ease);
-
-  /* Dot-grid texture — carried through from every surface */
-  background-image: radial-gradient(circle, rgba(60,45,20,0.07) 1px, transparent 1px);
-  background-size: 28px 28px;
-  background-color: var(--bg-card);
+  transition: border-color 0.2s var(--ease), box-shadow 0.2s var(--ease);
 }
 
 .board-list:hover {
-  border-color: rgba(196, 92, 46, 0.25);
-  box-shadow:
-    0 2px 8px rgba(60, 45, 20, 0.08),
-    0 8px 28px rgba(60, 45, 20, 0.10),
-    0 0 0 3px rgba(196, 92, 46, 0.06);
+  border-color: rgba(0, 82, 204, 0.22);
+  box-shadow: 0 4px 16px rgba(9, 30, 66, 0.08), 0 0 0 3px rgba(0, 82, 204, 0.05);
 }
 
 /* ══════════════════════════════════════
    LIST HEADER (fixed, never scrolls)
 ══════════════════════════════════════ */
 .list-header {
-  padding: 14px 16px;
-  border-bottom: 1px solid var(--border-subtle);
-  background: linear-gradient(
-    180deg,
-    rgba(245, 240, 232, 0.9) 0%,
-    rgba(253, 251, 247, 0.5) 100%
-  );
+  position: relative;
+  padding: 13px 16px;
+  border-bottom: 1px solid var(--neutral-50);
+  background: var(--neutral-10);
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 8px;
   cursor: grab;
-  border-radius: calc(var(--r-xl) - 1px) calc(var(--r-xl) - 1px) 0 0;
+  border-radius: calc(var(--r-lg) - 1px) calc(var(--r-lg) - 1px) 0 0;
   flex-shrink: 0;
   transition: background 0.18s var(--ease);
 }
 
-.list-header:hover {
-  background: linear-gradient(
-    180deg,
-    rgba(245, 240, 232, 1) 0%,
-    rgba(245, 240, 232, 0.7) 100%
-  );
-}
-
+.list-header:hover { background: #ffffff; }
 .list-header:active { cursor: grabbing; }
 
 /* Accent left-edge strip — colour varies per list via --accent */
@@ -99,30 +71,27 @@
   top: 0;
   bottom: 0;
   width: 3px;
-  background: var(--accent, var(--terra));
-  border-radius: calc(var(--r-xl) - 1px) 0 0 0;
-  opacity: 0.7;
+  background: var(--accent, var(--primary-blue));
+  border-radius: calc(var(--r-lg) - 1px) 0 0 0;
+  opacity: 0.75;
   transition: opacity 0.2s;
 }
 .board-list:hover .list-header::before { opacity: 1; }
 
-/* Make header position: relative so ::before works */
-.list-header { position: relative; }
-
 /* ── List title ── */
 .list-title {
-  font-family: 'Fraunces', serif;
-  font-size: 0.975rem;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.9rem;
   font-weight: 700;
-  color: var(--text-1);
+  color: var(--neutral-900);
   margin: 0;
   flex: 1;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.01em;
   line-height: 1.2;
-  padding-left: 8px; /* clear the accent strip */
+  padding-left: 6px;
 }
 
 /* ── Header actions (count + menu) ── */
@@ -133,26 +102,24 @@
   flex-shrink: 0;
 }
 
-/* Task count pill */
 .task-count {
   padding: 3px 9px;
-  background: var(--bg-base);
-  border: 1px solid var(--border-mid);
+  background: var(--neutral-50);
+  border: 1px solid var(--neutral-100);
   border-radius: var(--r-pill);
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: 0.72rem;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.7rem;
   font-weight: 700;
-  color: var(--text-3);
-  min-width: 26px;
+  color: var(--neutral-400);
+  min-width: 24px;
   text-align: center;
-  letter-spacing: 0.02em;
   transition: background 0.15s, color 0.15s;
 }
 
 .board-list:hover .task-count {
-  background: var(--terra-soft);
-  color: var(--terra);
-  border-color: rgba(196, 92, 46, 0.2);
+  background: rgba(0, 82, 204, 0.08);
+  color: var(--primary-blue);
+  border-color: rgba(0, 82, 204, 0.16);
 }
 
 /* ══════════════════════════════════════
@@ -162,28 +129,16 @@
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 12px;
+  padding: 10px;
   display: flex;
   flex-direction: column;
-  gap: 9px;
+  gap: 8px;
 }
 
-/* Warm scrollbar */
 .list-tasks::-webkit-scrollbar { width: 4px; }
-
-.list-tasks::-webkit-scrollbar-track {
-  background: transparent;
-  margin: 6px 0;
-}
-
-.list-tasks::-webkit-scrollbar-thumb {
-  background: rgba(60, 45, 20, 0.14);
-  border-radius: 4px;
-}
-
-.list-tasks::-webkit-scrollbar-thumb:hover {
-  background: rgba(196, 92, 46, 0.28);
-}
+.list-tasks::-webkit-scrollbar-track { background: transparent; margin: 6px 0; }
+.list-tasks::-webkit-scrollbar-thumb { background: var(--neutral-100); border-radius: 4px; }
+.list-tasks::-webkit-scrollbar-thumb:hover { background: rgba(0, 82, 204, 0.25); }
 
 /* ══════════════════════════════════════
    EMPTY STATE
@@ -200,33 +155,29 @@
 }
 
 .empty-tasks-icon {
-  font-size: 1.75rem;
-  opacity: 0.35;
+  font-size: 1.6rem;
+  opacity: 0.3;
   user-select: none;
 }
 
 .empty-tasks-text {
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: 0.8rem;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.78rem;
   font-weight: 500;
-  color: var(--text-3);
+  color: var(--neutral-400);
   font-style: italic;
   text-align: center;
 }
 
 /* ══════════════════════════════════════
-   ADD TASK FOOTER (fixed, never scrolls)
+   ADD TASK FOOTER
 ══════════════════════════════════════ */
 .create-task-btn-wrapper {
   flex-shrink: 0;
   padding: 10px 12px;
-  border-top: 1px solid var(--border-subtle);
-  background: linear-gradient(
-    0deg,
-    rgba(245, 240, 232, 0.8) 0%,
-    rgba(253, 251, 247, 0.4) 100%
-  );
-  border-radius: 0 0 calc(var(--r-xl) - 1px) calc(var(--r-xl) - 1px);
+  border-top: 1px solid var(--neutral-50);
+  background: var(--neutral-10);
+  border-radius: 0 0 calc(var(--r-lg) - 1px) calc(var(--r-lg) - 1px);
 }
 
 /* ══════════════════════════════════════
@@ -234,24 +185,24 @@
 ══════════════════════════════════════ */
 @media (max-width: 768px) {
   .board-list {
-    width: 280px;
-    min-width: 280px;
-    max-width: 280px;
-    height: calc(100vh - 120px);
+    width: 272px;
+    min-width: 272px;
+    max-width: 272px;
+    height: calc(100vh - 116px);
   }
-  .list-header { padding: 12px 14px; }
-  .list-tasks  { padding: 10px; }
+  .list-header { padding: 11px 14px; }
+  .list-tasks  { padding: 9px; }
 }
 
 @media (max-width: 480px) {
   .board-list {
-    width: 260px;
-    min-width: 260px;
-    max-width: 260px;
+    width: 252px;
+    min-width: 252px;
+    max-width: 252px;
     height: calc(100vh - 100px);
   }
-  .list-header { padding: 11px 12px; }
-  .list-title  { font-size: 0.9rem; }
+  .list-header { padding: 10px 12px; }
+  .list-title  { font-size: 0.85rem; }
 }
 
 /* ══════════════════════════════════════

@@ -1,21 +1,17 @@
 /* ═══════════════════════════════════════════════════════
-   BoardContent.css  —  Ivory Workspace · Board Canvas
-   Matches: Home · Navbar · BoardTopbar warm ivory system
+   BoardContent.css  —  Jira Blue System
+   Matches: BoardTopBar · BoardList · ListMenu
 ═══════════════════════════════════════════════════════ */
 
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700;1,9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap');
 
-/* ── Shared tokens ── */
 :root {
-  --terra:         #c45c2e;
-  --terra-soft:    rgba(196, 92, 46, 0.10);
-  --terra-glow:    rgba(196, 92, 46, 0.22);
-  --bg-base:       #f5f0e8;
-  --bg-card:       #fdfbf7;
-  --border-subtle: rgba(60, 45, 20, 0.08);
-  --border-mid:    rgba(60, 45, 20, 0.15);
-  --text-1:        #1a1208;
-  --ease:          cubic-bezier(0.22, 1, 0.36, 1);
+  --primary-blue: #0052CC;
+  --primary-blue-light: #2684FF;
+  --neutral-900: #091E42;
+  --neutral-100: #DFE1E6;
+  --neutral-50: #EBECF0;
+  --neutral-10: #FAFBFC;
 }
 
 /* ══════════════════════════════════════
@@ -25,20 +21,9 @@
   flex: 1;
   overflow-x: auto;
   overflow-y: hidden;
-  padding: 28px;
+  padding: 24px 28px;
   height: 100%;
-
-  /* Page ambient — dot grid on parchment */
-  background-image: radial-gradient(circle, rgba(60,45,20,0.10) 1px, transparent 1px);
-  background-size: 28px 28px;
-  background-color: var(--bg-base);
-
-  /* Warm radial ambient tints */
-  background-image:
-    radial-gradient(ellipse 65% 55% at 10% 15%, rgba(196,92,46,0.06) 0%, transparent 60%),
-    radial-gradient(ellipse 50% 40% at 88% 85%, rgba(74,124,95,0.05) 0%, transparent 55%),
-    radial-gradient(circle, rgba(60,45,20,0.10) 1px, transparent 1px);
-  background-size: auto, auto, 28px 28px;
+  background: var(--neutral-10);
 }
 
 /* ══════════════════════════════════════
@@ -46,10 +31,10 @@
 ══════════════════════════════════════ */
 .board-lists-container {
   display: flex;
-  gap: 18px;
+  gap: 16px;
   height: 100%;
   align-items: flex-start;
-  padding-bottom: 28px;
+  padding-bottom: 24px;
 }
 
 /* ══════════════════════════════════════
@@ -57,20 +42,15 @@
 ══════════════════════════════════════ */
 .list-drag-overlay {
   width: 300px;
-  background: var(--bg-card);
-  border: 1.5px solid rgba(196, 92, 46, 0.35);
-  border-radius: 16px;
+  background: #ffffff;
+  border: 1.5px solid rgba(0, 82, 204, 0.35);
+  border-radius: 14px;
   box-shadow:
-    0 12px 40px rgba(60, 45, 20, 0.18),
-    0 4px 16px rgba(196, 92, 46, 0.14),
-    0 0 0 4px rgba(196, 92, 46, 0.08);
-  padding: 16px;
-  transform: rotate(2.5deg) scale(1.02);
-
-  /* Dot texture inside ghost too */
-  background-image: radial-gradient(circle, rgba(60,45,20,0.07) 1px, transparent 1px);
-  background-size: 28px 28px;
-  background-color: var(--bg-card);
+    0 16px 40px rgba(9, 30, 66, 0.18),
+    0 4px 16px rgba(0, 82, 204, 0.14),
+    0 0 0 4px rgba(0, 82, 204, 0.08);
+  padding: 14px 16px;
+  transform: rotate(2deg) scale(1.02);
 }
 
 .list-drag-overlay .list-header {
@@ -80,48 +60,47 @@
 }
 
 .list-drag-overlay .list-header h3 {
-  font-family: 'Fraunces', serif;
-  font-size: 1rem;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.975rem;
   font-weight: 700;
-  color: var(--text-1);
-  letter-spacing: -0.03em;
+  color: var(--neutral-900);
+  letter-spacing: -0.01em;
   margin: 0;
 }
 
 /* ══════════════════════════════════════
-   SCROLLBAR — warm toned
+   SCROLLBAR
 ══════════════════════════════════════ */
 .board-content::-webkit-scrollbar {
-  height: 5px;
+  height: 6px;
 }
 
 .board-content::-webkit-scrollbar-track {
-  background: rgba(60, 45, 20, 0.05);
+  background: var(--neutral-50);
   border-radius: 6px;
   margin: 0 28px;
 }
 
 .board-content::-webkit-scrollbar-thumb {
-  background: rgba(60, 45, 20, 0.16);
+  background: var(--neutral-100);
   border-radius: 6px;
 }
 
 .board-content::-webkit-scrollbar-thumb:hover {
-  background: var(--terra-soft);
-  background: rgba(196, 92, 46, 0.3);
+  background: rgba(0, 82, 204, 0.3);
 }
 
 /* ══════════════════════════════════════
    RESPONSIVE
 ══════════════════════════════════════ */
 @media (max-width: 768px) {
-  .board-content         { padding: 18px; }
-  .board-lists-container { gap: 13px; }
+  .board-content         { padding: 16px; }
+  .board-lists-container { gap: 12px; }
 }
 
 @media (max-width: 480px) {
-  .board-content         { padding: 12px; }
-  .board-lists-container { gap: 9px; }
+  .board-content         { padding: 10px; }
+  .board-lists-container { gap: 8px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
