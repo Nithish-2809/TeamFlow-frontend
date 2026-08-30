@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { useBoardPageStore } from "../../store/boardPage.store"
 import { useAuthStore } from "../../store/auth.store"
-import ConfirmationModal from "../modals/Confirmationmodal"
+import ConfirmationModal from "../modals/ConfirmationModal"
 import Toast from "../modals/Toast"
 import "../../styles/BoardMembersSidebar.css"
 
