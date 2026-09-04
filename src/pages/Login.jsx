@@ -1,8 +1,8 @@
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
-import { GoogleLogin } from "@react-oauth/google"
 import { loginAndSetAuth, googleLoginAndSetAuth } from "../services/auth.service"
 import Toast from "../components/modals/Toast"
+import GoogleAuthButton from "../components/GoogleAuthButton"
 import "../styles/Login.css"
 
 const Login = () => {
@@ -104,7 +104,7 @@ const Login = () => {
             </div>
             <h1 className="brand-title">Welcome Back</h1>
             <p className="brand-tagline">Log in to continue your journey with TeamFlow.</p>
-            
+
             <div className="features-list">
               <div className="feature-item">
                 <div className="feature-icon">
@@ -230,18 +230,11 @@ const Login = () => {
                 <span>OR</span>
               </div>
 
-              <div className="google-signin-wrapper">
-                <GoogleLogin
-                  onSuccess={handleGoogleLogin}
-                  onError={() => setError("Google login failed. Please try again.")}
-                  useOneTap
-                  size="large"
-                  text="signin_with"
-                  shape="rectangular"
-                  width="375"
-                  theme="filled_black"
-                />
-              </div>
+              <GoogleAuthButton
+                onSuccess={handleGoogleLogin}
+                onError={() => setError("Google login failed. Please try again.")}
+                text="signin_with"
+              />
 
               <div className="form-footer">
                 <span>Don't have an account?</span>

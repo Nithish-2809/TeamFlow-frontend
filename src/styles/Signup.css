@@ -9,7 +9,7 @@
   --primary-blue-darker: #003884;
   --primary-blue-light: #2684FF;
   --primary-blue-lighter: #4C9AFF;
-  
+
   /* Semantic Colors */
   --success: #00875A;
   --success-light: #36B37E;
@@ -17,7 +17,7 @@
   --error-light: #FF5630;
   --warning: #FF991F;
   --info: #0065FF;
-  
+
   /* Neutrals */
   --neutral-900: #091E42;
   --neutral-800: #172B4D;
@@ -32,7 +32,7 @@
   --neutral-25: #F4F5F7;
   --neutral-10: #FAFBFC;
   --white: #FFFFFF;
-  
+
   /* Spacing System */
   --space-xs: 0.25rem;
   --space-sm: 0.5rem;
@@ -41,7 +41,7 @@
   --space-xl: 2rem;
   --space-2xl: 3rem;
   --space-3xl: 4rem;
-  
+
   /* Border Radius */
   --radius-sm: 4px;
   --radius-md: 6px;
@@ -49,14 +49,14 @@
   --radius-xl: 12px;
   --radius-2xl: 16px;
   --radius-full: 9999px;
-  
+
   /* Shadows */
   --shadow-xs: 0 1px 2px rgba(9, 30, 66, 0.08);
   --shadow-sm: 0 2px 4px rgba(9, 30, 66, 0.08), 0 0 1px rgba(9, 30, 66, 0.1);
   --shadow-md: 0 4px 8px rgba(9, 30, 66, 0.1), 0 0 1px rgba(9, 30, 66, 0.12);
   --shadow-lg: 0 8px 16px rgba(9, 30, 66, 0.12), 0 0 1px rgba(9, 30, 66, 0.15);
   --shadow-xl: 0 12px 24px rgba(9, 30, 66, 0.15), 0 0 1px rgba(9, 30, 66, 0.18);
-  
+
   /* Transitions */
   --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
   --transition-base: 200ms cubic-bezier(0.4, 0, 0.2, 1);
@@ -89,7 +89,7 @@ body {
 
 .signup-left {
   flex: 1;
-  background: 
+  background:
   linear-gradient(135deg, rgba(0, 82, 204, 0.65) 0%, rgba(38, 132, 255, 0.60) 100%),
   url('/signup-background.png') center/cover no-repeat;
   display: flex;
@@ -109,7 +109,7 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  background: 
+  background:
     radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.08) 0%, transparent 40%),
     radial-gradient(circle at 80% 70%, rgba(255, 255, 255, 0.05) 0%, transparent 35%);
   animation: pulseGlow 8s ease-in-out infinite;
@@ -283,7 +283,7 @@ body {
   -webkit-backdrop-filter: blur(20px);
   padding: var(--space-2xl);
   border-radius: var(--radius-2xl);
-  box-shadow: 
+  box-shadow:
     0 8px 32px rgba(9, 30, 66, 0.12),
     0 0 0 1px rgba(255, 255, 255, 0.3),
     inset 0 1px 0 rgba(255, 255, 255, 0.8);
@@ -603,7 +603,7 @@ body {
   justify-content: center;
   gap: var(--space-sm);
   margin-top: var(--space-sm);
-  box-shadow: 
+  box-shadow:
     0 4px 12px rgba(0, 82, 204, 0.25),
     inset 0 -1px 0 rgba(0, 0, 0, 0.1);
   position: relative;
@@ -625,14 +625,14 @@ body {
 
 .submit-button:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 
+  box-shadow:
     0 8px 20px rgba(0, 82, 204, 0.3),
     inset 0 -1px 0 rgba(0, 0, 0, 0.1);
 }
 
 .submit-button:active:not(:disabled) {
   transform: translateY(0);
-  box-shadow: 
+  box-shadow:
     0 2px 8px rgba(0, 82, 204, 0.2),
     inset 0 1px 2px rgba(0, 0, 0, 0.1);
 }
@@ -691,19 +691,29 @@ body {
 }
 
 /* ==================== GOOGLE SIGN-IN ==================== */
+/* FIX: the button's internal iframe is rendered by Google at a fixed
+   pixel width (set dynamically by GoogleAuthButton.jsx via
+   ResizeObserver). This wrapper just needs to center it and clip any
+   rounding overflow — it can no longer rely on CSS alone to "stretch"
+   the iframe, since that only resized the empty iframe box, not the
+   button graphic drawn inside it (which is what caused the clipping
+   in the screenshot). */
 
 .google-signin-wrapper {
   display: flex;
   justify-content: center;
+  align-items: center;
   width: 100%;
+  overflow: hidden;
 }
 
 .google-signin-wrapper > div {
-  width: 100% !important;
+  max-width: 100%;
 }
 
 .google-signin-wrapper iframe {
   border-radius: var(--radius-lg) !important;
+  max-width: 100% !important;
   transition: all var(--transition-base);
 }
 
@@ -853,8 +863,4 @@ button:focus-visible,
 input:focus-visible {
   outline: 2px solid var(--primary-blue);
   outline-offset: 2px;
-}
-
-.google-signin-wrapper {
-  width: 100%;
 }

@@ -1,8 +1,8 @@
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
-import { GoogleLogin } from "@react-oauth/google"
 import { signupUser, googleSignupUser } from "../api/auth.api"
 import Toast from "../components/modals/Toast"
+import GoogleAuthButton from "../components/GoogleAuthButton"
 import "../styles/Signup.css"
 
 const Signup = () => {
@@ -102,7 +102,7 @@ const Signup = () => {
           duration={4000}
         />
       )}
-      
+
       <div className="signup-container">
       {/* Left branding section */}
       <div className="signup-left">
@@ -121,7 +121,7 @@ const Signup = () => {
           </div>
           <h1 className="brand-title">TeamFlow</h1>
           <p className="brand-tagline">Collaborate seamlessly. Organize efficiently. Execute flawlessly.</p>
-          
+
           <div className="features-list">
             <div className="feature-item">
               <div className="feature-icon">
@@ -288,18 +288,11 @@ const Signup = () => {
               <span>OR</span>
             </div>
 
-            <div className="google-signin-wrapper">
-              <GoogleLogin
-                onSuccess={handleGoogleSignup}
-                onError={() => setError("Google signup failed. Please try again.")}
-                useOneTap
-                size="large"
-                text="signup_with"
-                shape="rectangular"
-                width="375"
-                theme="filled_black"
-              />
-            </div>
+            <GoogleAuthButton
+              onSuccess={handleGoogleSignup}
+              onError={() => setError("Google signup failed. Please try again.")}
+              text="signup_with"
+            />
 
             <div className="form-footer">
               <span>Already have an account?</span>
